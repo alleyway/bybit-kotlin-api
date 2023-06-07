@@ -5,8 +5,8 @@ plugins {
 dependencies {
     implementation(project(":"))
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
     // For custom interceptors on defaultOkHttpClientProvider
     implementation("com.squareup.okhttp3:okhttp:4.7.2")

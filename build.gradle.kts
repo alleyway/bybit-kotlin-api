@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 
 buildscript {
     repositories {
@@ -5,26 +6,30 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.20")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.21")
     }
 }
-
 
 plugins {
     `java-library`
     `maven-publish`
-    kotlin("jvm") version "1.8.20"
-    kotlin("plugin.serialization") version "1.8.20"
-    kotlin("kapt") version "1.8.20"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.serialization") version "1.8.21"
+    kotlin("kapt") version "1.8.21"
 }
 
+tasks.withType<KaptGenerateStubs> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
 
 
 dependencies {
 
 	implementation("ch.qos.logback:logback-classic:1.2.9")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
 
     val ktorVersion = "2.3.1"
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
@@ -55,6 +60,7 @@ allprojects {
 //    from(sourceSets["main"].allSource)
 //}
 
+
 tasks {
 
 	test {
@@ -65,7 +71,6 @@ tasks {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
-
 
     artifacts {
 //        add("archives", sourcesJar)
