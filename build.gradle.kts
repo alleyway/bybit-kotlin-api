@@ -25,6 +25,9 @@ tasks.withType<KaptGenerateStubs> {
     }
 }
 
+tasks.withType<JavaCompile> {
+    targetCompatibility = "1.8"
+}
 
 dependencies {
 
