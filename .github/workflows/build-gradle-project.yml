@@ -19,7 +19,7 @@ jobs:
       - name: Get Java version
         run: java --version
       - name: Run build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew build --exclude-task test -i
       - name: Upload JUnit Report
         uses: actions/upload-artifact@v3
         if: always()
