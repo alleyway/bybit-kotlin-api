@@ -96,7 +96,7 @@ tasks {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.github.alleyway"
+            groupId = "io.github.alleyway"
             artifactId = "bybit-kotlin-api"
 //            artifact(sourcesJar)
 
