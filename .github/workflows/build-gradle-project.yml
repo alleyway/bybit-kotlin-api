@@ -19,7 +19,7 @@ jobs:
       - name: Get Java version
         run: java --version
       - name: Run build with Gradle Wrapper
-        run: ./gradlew build publish --exclude-task test -i -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
+        run: ./gradlew build publish --no-daemon --exclude-task test -i -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
       - name: Upload JUnit Report
         uses: actions/upload-artifact@v3
         if: always()
