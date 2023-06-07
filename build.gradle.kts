@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 
+project.version = "0.1-SNAPSHOT"
+project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
         google()
@@ -14,6 +16,7 @@ buildscript {
 plugins {
     `java-library`
     `maven-publish`
+    signing
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.serialization") version "1.8.21"
     kotlin("kapt") version "1.8.21"
@@ -31,7 +34,7 @@ plugins {
 
 dependencies {
 
-	implementation("ch.qos.logback:logback-classic:1.2.9")
+    implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
 
     val ktorVersion = "2.3.1"
@@ -46,8 +49,8 @@ dependencies {
     implementation("com.thinkinglogic.builder:kotlin-builder-annotation:$ktBuilderVersion")
     kapt("com.thinkinglogic.builder:kotlin-builder-processor:$ktBuilderVersion")
 
-	testImplementation(kotlin("test"))
-	testImplementation(kotlin("test-junit5"))
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit5"))
 }
 
 allprojects {
@@ -56,19 +59,29 @@ allprojects {
         maven { url = uri("https://jitpack.io") }
     }
 }
-
+//
 //val sourcesJar = tasks.create("sources", Jar::class) {
 //    dependsOn(JavaPlugin.CLASSES_TASK_NAME)
-//    classifier = "sources"
+////    classifier = "sources"
 //    from(sourceSets["main"].allSource)
+//}
+
+//val javaJar = tasks.create("jar", Jar::class) {
+//    dependsOn(JavaPlugin.CLASSES_TASK_NAME)
+////    classifier = "sources"
+//    from(java["main"].allSource)
 //}
 
 
 tasks {
 
-	test {
-		useJUnitPlatform()
-	}
+    publishing {
+
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 
     kapt {
         kotlin {
@@ -86,21 +99,75 @@ tasks {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
 
+
+
     artifacts {
 //        add("archives", sourcesJar)
         add("archives", jar)
     }
 }
 
+tasks.register("androidReleaseSourcesJar", Jar::class) {
+    archiveClassifier.set("sources")
+    from(kotlin.sourceSets["main"].kotlin.srcDirs)
+}
+
+val isSnapshot = project.version.toString().contains("SNAPSHOT")
+
 
 publishing {
     publications {
+
         create<MavenPublication>("maven") {
             groupId = "io.github.alleyway"
             artifactId = "bybit-kotlin-api"
-//            artifact(sourcesJar)
-
+            version = project.version.toString()
+            //artifact(sourcesJar)
             from(components["java"])
+            artifact(tasks.getByName("androidReleaseSourcesJar"))
+
+            pom {
+                name.set(provider {
+                    project.description ?: "${project.group}:${project.name}"
+                })
+                url.set("https://junit.org/junit5/")
+                scm {
+                    connection.set("scm:git:git://github.com/alleyway/bybit-kotlin-api.git")
+                    developerConnection.set("scm:git:git://github.com/alleyway/bybit-kotlin-api.git")
+                    url.set("https://github.com/alleyway/bybit-kotlin-api")
+                }
+//                licenses {
+//                    license {
+//                        val license: License by rootProject.extra
+//                        name.set(license.name)
+//                        url.set(license.url.toString())
+//                    }
+//                }
+                developers {
+                    developer {
+                        id.set("mlake900")
+                        name.set("Michael L")
+                        email.set("mlake@alleywayapps.com")
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    repositories {
+
+        maven {
+            name = "sonatype"
+            credentials(PasswordCredentials::class)
+
+            val releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            val snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+
+            url = uri(if (isSnapshot) snapshotRepo else releaseRepo)
         }
     }
+
 }
+
