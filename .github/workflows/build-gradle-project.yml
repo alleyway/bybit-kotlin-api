@@ -7,16 +7,21 @@ jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
     steps:
-      - name: "Set up latest Oracle JDK 20"
-        uses: oracle-actions/setup-java@v1
-        with:
-          website: oracle.com
-          release: 20
       - name: Checkout project sources
         uses: actions/checkout@v3
+      - name: Checkout project sources
+        uses: actions/setup-java@v3
+        with:
+          java-version: '20'
+          distribution: 'oracle'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Get Java version
         run: java --version
       - name: Run build with Gradle Wrapper
         run: ./gradlew build
+      - name: Upload JUnit Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test Report
+          path: build/reports/test/
