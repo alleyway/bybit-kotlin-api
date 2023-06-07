@@ -4,7 +4,6 @@ import bybit.sdk.DefaultOkHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.rest.ByBitRestClient
 import bybit.sdk.rest.okHttpClientProvider
-import bybit.kotlin.sdk.websocket.*
 import bybit.sdk.websocket.*
 import bybit.sdk.rest.*
 import bybit.sdk.websocket.*
@@ -97,8 +96,8 @@ suspend fun websocketSample(bybitKey: String) {
         })
 
     val subscriptions = listOf(
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Crypto.Trades, "ETH-USD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Crypto.Trades, "BTC-USD")
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "ETH-USD"),
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "BTC-USD")
     )
 
     websocketClient.connect()
@@ -108,45 +107,3 @@ suspend fun websocketSample(bybitKey: String) {
     websocketClient.disconnect()
 }
 
-suspend fun indicesWebsocketSample(bybitKey: String) {
-    val websocketClient = ByBitWebSocketClient(
-        bybitKey,
-        ByBitWebSocketCluster.Indices,
-        object : ByBitWebSocketListener {
-            override fun onAuthenticated(client: ByBitWebSocketClient) {
-                println("Connected!")
-            }
-
-            override fun onReceive(
-				client: ByBitWebSocketClient,
-				message: ByBitWebSocketMessage
-            ) {
-                when (message) {
-                    is ByBitWebSocketMessage.RawMessage -> println(String(message.data))
-                    else -> println("Receieved Message: $message")
-                }
-            }
-
-            override fun onDisconnect(client: ByBitWebSocketClient) {
-                println("Disconnected!")
-            }
-
-            override fun onError(client: ByBitWebSocketClient, error: Throwable) {
-                println("Error: ")
-                error.printStackTrace()
-            }
-
-        })
-
-    val subscriptions = listOf(
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Indices.Value, "I:NDX"),
-        // Likely you will need to increase the delay call below to see Indices.Aggregates messages
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Indices.Aggregates, "I:SPX")
-    )
-
-    websocketClient.connect()
-    websocketClient.subscribe(subscriptions)
-    delay(5000)
-    websocketClient.unsubscribe(subscriptions)
-    websocketClient.disconnect()
-}
