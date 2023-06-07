@@ -1,12 +1,8 @@
 package bybit.sdk.rest
 
 
-import bybit.sdk.rest.ByBitRestClient
-import bybit.sdk.rest.contract.getServerTime
-import bybit.sdk.rest.okHttpClientProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
-//import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 internal class ContractClientTest {
@@ -23,12 +19,9 @@ internal class ContractClientTest {
 			bybitKey, bybitSecret,
 			httpClientProvider = okHttpClientProvider
 		)
-
 		val resp = bybitClient.contractClient.getServerTimeBlocking()
-
 		assertEquals(0, resp.retCode)
 		assertEquals("OK", resp.retMsg)
-
 	}
 
 

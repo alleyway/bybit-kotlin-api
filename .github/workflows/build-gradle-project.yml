@@ -7,7 +7,7 @@ jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
     steps:
-      - name: "Set up latest Oracle JDK 17"
+      - name: "Set up latest Oracle JDK 20"
         uses: oracle-actions/setup-java@v1
         with:
           website: oracle.com
