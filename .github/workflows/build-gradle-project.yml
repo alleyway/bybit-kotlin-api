@@ -22,6 +22,8 @@ jobs:
         run: ./gradlew build
       - name: Upload JUnit Report
         uses: actions/upload-artifact@v3
+        if: always()
+        continue-on-error: true
         with:
           name: Test Report
           path: build/reports/test/
