@@ -77,10 +77,11 @@ tasks {
     }
 
     compileJava {
-        targetCompatibility = JavaVersion.VERSION_20.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
     }
 
     compileKotlin {
+
         kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }

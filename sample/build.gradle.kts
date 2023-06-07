@@ -21,7 +21,8 @@ dependencies {
 tasks {
 
     compileJava {
-        targetCompatibility = JavaVersion.VERSION_20.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
     }
 
     compileKotlin {
