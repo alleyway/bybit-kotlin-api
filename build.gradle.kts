@@ -39,7 +39,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     // Annotation processor that generates Java builders for data classes
-    val ktBuilderVersion = "1.2.2"
+    val ktBuilderVersion = "1.2.1"
     implementation("com.thinkinglogic.builder:kotlin-builder-annotation:$ktBuilderVersion")
     kapt("com.thinkinglogic.builder:kotlin-builder-processor:$ktBuilderVersion")
 
