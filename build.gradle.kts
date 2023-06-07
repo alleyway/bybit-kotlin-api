@@ -19,15 +19,15 @@ plugins {
     kotlin("kapt") version "1.8.21"
 }
 
-tasks.withType<KaptGenerateStubs> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
+//tasks.withType<KaptGenerateStubs> {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
 
-tasks.withType<JavaCompile> {
-    targetCompatibility = "1.8"
-}
+//tasks.withType<JavaCompile> {
+//    targetCompatibility = "1.8"
+//}
 
 dependencies {
 
@@ -69,6 +69,16 @@ tasks {
 	test {
 		useJUnitPlatform()
 	}
+
+    kapt {
+        kotlin {
+            jvmToolchain(17)
+        }
+    }
+
+    compileJava {
+        targetCompatibility = JavaVersion.VERSION_20.toString()
+    }
 
     compileKotlin {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()

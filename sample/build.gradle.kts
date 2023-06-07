@@ -18,6 +18,18 @@ dependencies {
     implementation("com.tylerthrailkill.helpers:pretty-print:2.0.2")
 }
 
+tasks {
+
+    compileJava {
+        targetCompatibility = JavaVersion.VERSION_20.toString()
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    }
+}
+
 task(name = "javaSample", type = JavaExec::class) {
     group = "samples"
     description = "Sample usage of the bybit client from Java"
