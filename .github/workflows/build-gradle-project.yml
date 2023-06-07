@@ -26,4 +26,4 @@ jobs:
         continue-on-error: true
         with:
           name: Test Report
-          path: build/reports/test/
+          path: build/reports/tests/test/
