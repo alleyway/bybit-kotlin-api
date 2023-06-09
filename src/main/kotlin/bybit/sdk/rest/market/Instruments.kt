@@ -55,6 +55,42 @@ data class TickersDTO(
 ) : Paginatable<TickerDTO>
 
 @Serializable
+enum class ContractType {
+    InversePerpetual,
+    LinearPerpetual,
+    InverseFutures,
+    LinearFutures
+}
+
+@Serializable
 data class TickerDTO(
-    val symbol: String
+    val symbol: String,
+    val contractType: ContractType,
+    //status: InstrumentStatusV5;
+    val baseCoin: String,
+    val quoteCoin: String,
+    val launchTime: String,
+    val deliveryTime: String?,
+    val deliveryFeeRate: String?,
+    val priceScale: String,
+//    leverageFilter: {
+//        minLeverage: string;
+//        maxLeverage: string;
+//        leverageStep: string;
+//    };
+//    priceFilter: {
+//        minPrice: string;
+//        maxPrice: string;
+//        tickSize: string;
+//    };
+//    lotSizeFilter: {
+//        maxOrderQty: string;
+//        minOrderQty: string;
+//        qtyStep: string;
+//        postOnlyMaxOrderQty?: string;
+//    }
+    val unifiedMarginTrade: Boolean,
+    val fundingInterval: Int,
+    val settleCoin: String
+
 )

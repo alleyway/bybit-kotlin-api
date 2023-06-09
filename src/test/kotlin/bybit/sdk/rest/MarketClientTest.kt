@@ -36,8 +36,9 @@ internal class MarketClientTest {
 			httpClientProvider = okHttpClientProvider
 		)
 		val params = GetInstrumentsInfoParamsV5(
-			limit = 10,
+			limit = 10, // apparently not allowed to pass a limit for spot
 			category = "inverse"
+//			category = "linear"
 		)
 
 		val resp = bybitClient.marketClient.listSupportedInstruments(params).asSequence().toList()
