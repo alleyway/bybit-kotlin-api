@@ -1,7 +1,6 @@
 package bybit.sdk.rest.contract
 
 import bybit.sdk.rest.ByBitRestOption
-import bybit.sdk.rest.*
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,7 +10,7 @@ import kotlinx.serialization.Serializable
 suspend fun ByBitContractClient.getServerTime(
 	vararg opts: ByBitRestOption
 ): ServerTimeDTO =
-	bybitClient.fetchResult({
+	byBitRestClient.fetchResult({
 		path("v3", "public", "time")
 	}, *opts)
 

@@ -1,13 +1,14 @@
 package bybit.sdk.rest
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.http.*
 import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
 import bybit.sdk.rest.contract.ByBitContractClient
+import bybit.sdk.rest.market.ByBitMarketClient
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -30,6 +31,7 @@ constructor(
 
 	val contractClient by lazy { ByBitContractClient(this) }
 
+    val marketClient by lazy { ByBitMarketClient(this) }
 
     private val baseUrlBuilder: URLBuilder
         get() = httpClientProvider.getDefaultRestURLBuilder().apply {
@@ -45,14 +47,23 @@ constructor(
         vararg options: ByBitRestOption
     ): T {
         val url = baseUrlBuilder.apply(urlBuilderBlock).build()
-        return withHttpClient { httpClient ->
+        var body = withHttpClient { httpClient ->
             httpClient.get(url) {
                 options.forEach { this.it() }
 
                 // Set after options are applied to be sure it doesn't get over-written.
                 headers["User-Agent"] = Version.userAgent
             }
-        }.body()
+        }.body<T>()
+
+        if (body is Paginatable<*> && body.result?.nextPageCursor?.isNotBlank() == true) {
+            val nextUrl = baseUrlBuilder.apply(urlBuilderBlock).apply {
+                parameters["cursor"] = body.result!!.nextPageCursor.toString()
+            }.buildString()
+            body.nextUrl = nextUrl
+        }
+
+        return body
     }
 
     /**
