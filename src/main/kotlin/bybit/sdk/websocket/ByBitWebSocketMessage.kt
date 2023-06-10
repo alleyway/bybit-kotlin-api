@@ -26,7 +26,7 @@ sealed class ByBitWebSocketMessage {
         @SerialName("T") val timestamp: Long? = null,
         @SerialName("s") val symbol: String? = null,
         @SerialName("S") val side: String? = null,
-        @SerialName("v") val volume: Int? = null,
+        @SerialName("v") val volume: Double? = null,
         @SerialName("p") val price: Double? = null,
     )
 
