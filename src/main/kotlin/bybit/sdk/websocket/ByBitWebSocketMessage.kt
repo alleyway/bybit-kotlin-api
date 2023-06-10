@@ -31,6 +31,20 @@ sealed class ByBitWebSocketMessage {
     )
 
     @Serializable
+    data class TickerItem(
+        val symbol: String? = null,
+        val price24hPcnt: Double? = null,
+        val fundingRate: Double? = null,
+        val markPrice: Double? = null,
+        val indexPrice: Double? = null,
+        val openInterestValue: Double? = null,
+        val bid1Price: Double? = null,
+        val bid1Size: Double? = null,
+        val ask1Price: Double? = null,
+        val ask1Size: Double? = null,
+    )
+
+    @Serializable
     sealed class TopicResponse : ByBitWebSocketMessage() {
 
         @SerialName("topic")
@@ -45,6 +59,12 @@ sealed class ByBitWebSocketMessage {
         @Serializable
         data class PublicTrade(
             @SerialName("data") val data: List<PublicTradeItem>
+        ) : TopicResponse()
+
+        @Serializable
+        data class Ticker(
+            val cs: Long,
+            val data: TickerItem
         ) : TopicResponse()
 
     }

@@ -267,6 +267,7 @@ constructor(
             val message = when (frameType) {
                 "ping", "subscribe" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
                 "publicTrade" -> serializer.decodeFromJsonElement(TopicResponse.PublicTrade.serializer(), frame)
+                "tickers" -> serializer.decodeFromJsonElement(TopicResponse.Ticker.serializer(), frame)
                 else -> RawMessage(frame.toString().toByteArray())
             }
 

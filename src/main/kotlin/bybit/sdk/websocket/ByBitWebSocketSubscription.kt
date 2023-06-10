@@ -11,6 +11,7 @@ sealed class ByBitWebSocketChannel(val prefix: String) {
 
     sealed class Contract(channelPrefix: String) : ByBitWebSocketChannel(channelPrefix) {
         object Trades: Contract("publicTrade")
+        object Tickers: Contract("tickers")
         object Liquidations: Contract("liquidation")
     }
 
