@@ -10,11 +10,9 @@ data class ByBitWebSocketSubscription(
 sealed class ByBitWebSocketChannel(val prefix: String) {
 
     sealed class Contract(channelPrefix: String) : ByBitWebSocketChannel(channelPrefix) {
-        object Trades: Contract("dummy")
-//        object Quotes: Stocks("Q")
+        object Trades: Contract("publicTrade")
+        object Liquidations: Contract("liquidation")
     }
-
-
 
     /**
      * Use this if there's a new channel that this SDK doesn't fully support yet

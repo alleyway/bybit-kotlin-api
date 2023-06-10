@@ -1,16 +1,7 @@
 package bybit.sdk.sample
 
-import bybit.sdk.DefaultOkHttpClientProvider
-import bybit.sdk.HttpClientProvider
-import bybit.sdk.rest.ByBitRestClient
-import bybit.sdk.rest.okHttpClientProvider
-import bybit.sdk.websocket.*
-import bybit.sdk.rest.*
 import bybit.sdk.websocket.*
 import kotlinx.coroutines.delay
-import okhttp3.Interceptor
-import okhttp3.Response
-import okhttp3.ResponseBody
 import kotlin.system.exitProcess
 
 
@@ -24,11 +15,11 @@ suspend fun main() {
         exitProcess(1)
     }
 
-    val bybitClient = ByBitRestClient(bybitKey, bybitSecret,  httpClientProvider = okHttpClientProvider)
-
-    println("Blocking for server time...")
-    val serverTimeResponse = bybitClient.contractClient.getServerTimeBlocking()
-    println("Got server time synchronously: $serverTimeResponse")
+//    val bybitClient = ByBitRestClient(bybitKey, bybitSecret,  httpClientProvider = okHttpClientProvider)
+//
+//    println("Blocking for server time...")
+//    val serverTimeResponse = bybitClient.contractClient.getServerTimeBlocking()
+//    println("Got server time synchronously: $serverTimeResponse")
 
 //    println("Getting server time asynchronously...")
 //    val deferred = GlobalScope.async {
@@ -37,7 +28,7 @@ suspend fun main() {
 //    }
 
    // deferred.await()
-    println("Done getting time asynchronously!")
+//    println("Done getting time asynchronously!")
 //
 //    println("Using options")
 //    val groupedDaily = bybitClient.getGroupedDailyAggregates(
@@ -59,16 +50,19 @@ suspend fun main() {
 //    indicesSample(bybitClient)
 //
 //    println("\n\nWebsocket sample:")
-//    websocketSample(bybitKey)
+    websocketSample(bybitKey, bybitSecret)
 
 	exitProcess(0)
 
 }
 
-suspend fun websocketSample(bybitKey: String) {
+suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
+
+     val options = WSClientConfigurableOptions(true)
+
     val websocketClient = ByBitWebSocketClient(
-        bybitKey,
-        ByBitWebSocketCluster.Crypto,
+        ByBitWebSocketCluster.Inverse,
+        options,
         object : ByBitWebSocketListener {
             override fun onAuthenticated(client: ByBitWebSocketClient) {
                 println("Connected!")
@@ -80,7 +74,7 @@ suspend fun websocketSample(bybitKey: String) {
             ) {
                 when (message) {
                     is ByBitWebSocketMessage.RawMessage -> println(String(message.data))
-                    else -> println("Receieved Message: $message")
+                    else -> println("Received Message: $message")
                 }
             }
 
@@ -96,13 +90,14 @@ suspend fun websocketSample(bybitKey: String) {
         })
 
     val subscriptions = listOf(
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "ETH-USD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "BTC-USD")
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "ETHUSD"),
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Liquidations, "BTCUSD")
     )
 
     websocketClient.connect()
     websocketClient.subscribe(subscriptions)
-    delay(5000)
+    delay(15000)
     websocketClient.unsubscribe(subscriptions)
     websocketClient.disconnect()
 }

@@ -47,13 +47,17 @@ public class JavaUsageSample {
 
 
         System.out.println("Websocket sample:");
-        websocketSample(bybitKey);
+        websocketSample(bybitKey, bybitSecret);
     }
 
-    public static void websocketSample(String bybitKey) {
+    public static void websocketSample(String bybitKey, String bybitSecret) {
+
+        WSClientConfigurableOptions options =
+                new WSClientConfigurableOptions(true);
+
         ByBitWebSocketClient client = new ByBitWebSocketClient(
-                bybitKey,
-                ByBitWebSocketCluster.Crypto,
+                ByBitWebSocketCluster.Spot,
+                options,
                 new DefaultByBitWebSocketListener() {
                     @Override
                     public void onReceive(@NotNull ByBitWebSocketClient client, @NotNull ByBitWebSocketMessage message) {

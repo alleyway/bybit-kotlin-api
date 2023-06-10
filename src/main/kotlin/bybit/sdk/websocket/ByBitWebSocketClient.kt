@@ -1,35 +1,76 @@
 package bybit.sdk.websocket
 
-import io.ktor.client.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.websocket.*
 import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
 import bybit.sdk.ext.ByBitCompletionCallback
 import bybit.sdk.ext.coroutineToCompletionCallback
 import bybit.sdk.websocket.ByBitWebSocketMessage.*
+import io.ktor.client.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
 
-private const val EVENT_TYPE_MESSAGE_KEY = "ev"
+private const val TOPIC_MESSAGE_KEY = "topic"
+private const val OPERATION_MESSAGE_KEY = "op"
+
+/*
+
+Spot: wss://stream.bybit.com/v5/public/spot
+USDT and USDC perpetual: wss://stream.bybit.com/v5/public/linear
+Inverse contract: wss://stream.bybit.com/v5/public/inverse
+USDC Option: wss://stream.bybit.com/v5/public/option
+
+ */
+
 
 enum class ByBitWebSocketCluster(internal vararg val pathComponents: String) {
-    Contract("v3"),
-    Forex("forex"),
-    Crypto("crypto"),
-    Options("options"),
-    Indices("indices"),
+    Spot("v5", "public", "spot"),
+    Linear("v5", "public", "linear"),
+    Inverse("v5", "public", "inverse"),
+    Option("v5", "public", "option"),
+    Private("v5", "private")
 }
+
+
+data class WSClientConfigurableOptions(
+    val testnet: Boolean = true,
+    val key: String? = null,
+    val secret: String? = null
+) {
+    constructor(testnet: Boolean) : this(testnet, null, null) {
+
+    }
+}
+
+//    /**
+//     * The API group this client should connect to.
+//     *
+//     * For the V3 APIs use `v3` as the market (spot/unified margin/usdc/account asset/copy trading)
+//     */
+//    market: APIMarket;
+//
+//    pongTimeout?: number;
+//    pingInterval?: number;
+//    reconnectTimeout?: number;
+//    restOptions?: RestClientOptions;
+//    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//    requestOptions?: any;
+//    wsUrl?: string;
+//    /** If true, fetch server time before trying to authenticate (disabled by default) */
+//    fetchTimeOffsetBeforeAuth?: boolean;
+//}
 
 /**
  *
  * @param apiKey the API key to use with all API requests
+ * @param secret the API secret to use with all API requests
  * @param cluster the [ByBitWebSocketCluster] to connect to
  * @param listener the [ByBitWebSocketListener] to send events to
  * @param bufferSize the size of the back buffer to use when websocket events start coming in faster than they can be processed. To drop all but the latest event, use [Channel.CONFLATED]
@@ -40,13 +81,13 @@ enum class ByBitWebSocketCluster(internal vararg val pathComponents: String) {
 class ByBitWebSocketClient
 @JvmOverloads
 constructor(
-	private val apiKey: String,
-	val cluster: ByBitWebSocketCluster,
-	private val listener: ByBitWebSocketListener,
-	private val bufferSize: Int = Channel.UNLIMITED,
-	private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider(),
-	private val bybitWebSocketDomain: String = "stream-testnet.bybit.com"
-) {
+    val cluster: ByBitWebSocketCluster,
+    val options: WSClientConfigurableOptions = WSClientConfigurableOptions(),
+    private val listener: ByBitWebSocketListener,
+    private val bufferSize: Int = Channel.UNLIMITED,
+    private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider(),
+
+    ) {
 
     private val serializer by lazy {
         Json {
@@ -82,7 +123,11 @@ constructor(
 
         val client = httpClientProvider.buildClient()
         val session = client.webSocketSession {
-            host = bybitWebSocketDomain
+            host = if (options.testnet) {
+                "stream-testnet.bybit.com"
+            } else {
+                "stream.bybit.com"
+            }
 
             url.protocol = URLProtocol.WSS
             url.port = URLProtocol.WSS.defaultPort
@@ -104,8 +149,8 @@ constructor(
             listener.onError(this, ex)
         }
 
-        // Authenticate and wait for result to be processed before calling listener.onAuthenticated
-        session.send("""{"action": "auth", "params": "$apiKey"}""")
+        // send a quick ping test
+        session.send("""{"req_id": "100001", "op": "ping"}""");
     }
 
     /** Blocking version of [connect] */
@@ -126,7 +171,7 @@ constructor(
 
         activeConnection
             ?.webSocketSession
-            ?.send("""{"action": "subscribe", "params":"${subscriptions.joinToString(separator = ",")}"}""")
+            ?.send("""{"op": "subscribe", "args":["${subscriptions.joinToString(separator = "\",\"")}"]}""")
     }
 
     /** Blocking version of [subscribe]  */
@@ -147,7 +192,7 @@ constructor(
 
         activeConnection
             ?.webSocketSession
-            ?.send("""{"action": "unsubscribe", "params":"${subscriptions.joinToString(separator = ",")}"}""")
+            ?.send("""{"op": "unsubscribe", "args":["${subscriptions.joinToString(separator = "\",\"")}"]}""")
     }
 
     /** Blocking version of [unsubscribe] */
@@ -208,24 +253,25 @@ constructor(
         }
 
         if (frame is JsonObject) {
-            val message = when (frame.jsonObject[EVENT_TYPE_MESSAGE_KEY]?.jsonPrimitive?.content) {
-                "status" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
-                "T" -> serializer.decodeFromJsonElement(StocksMessage.Trade.serializer(), frame)
-                "Q" -> serializer.decodeFromJsonElement(StocksMessage.Quote.serializer(), frame)
-                "A", "AM" -> serializer.decodeFromJsonElement(StocksMessage.Aggregate.serializer(), frame)
-                "C" -> serializer.decodeFromJsonElement(ForexMessage.Quote.serializer(), frame)
-                "CA" -> serializer.decodeFromJsonElement(ForexMessage.Aggregate.serializer(), frame)
-                "XQ" -> serializer.decodeFromJsonElement(CryptoMessage.Quote.serializer(), frame)
-                "XT" -> serializer.decodeFromJsonElement(CryptoMessage.Trade.serializer(), frame)
-                "XA" -> serializer.decodeFromJsonElement(CryptoMessage.Aggregate.serializer(), frame)
-                "XS" -> serializer.decodeFromJsonElement(CryptoMessage.ConsolidatedQuote.serializer(), frame)
-                "XL2" -> serializer.decodeFromJsonElement(CryptoMessage.Level2Tick.serializer(), frame)
-                "V" -> serializer.decodeFromJsonElement(IndicesMessage.Value.serializer(), frame)
+
+            val topic = frame.jsonObject[TOPIC_MESSAGE_KEY]?.jsonPrimitive?.content
+
+            val frameType = if (!topic.isNullOrBlank()) {
+                topic.split('.').get(0)
+            } else {
+                frame.jsonObject[OPERATION_MESSAGE_KEY]?.jsonPrimitive?.content
+            }
+
+            println("\u001b[33m" + frame.toString() + "\u001b[0m")
+
+            val message = when (frameType) {
+                "ping", "subscribe" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
+                "publicTrade" -> serializer.decodeFromJsonElement(TopicResponse.PublicTrade.serializer(), frame)
                 else -> RawMessage(frame.toString().toByteArray())
             }
+
             collector.add(message)
         }
-
         return collector
     }
 
@@ -248,7 +294,7 @@ constructor(
     private fun parseStatusMessageForAuthenticationResult(message: JsonElement): Boolean {
         if (message.isStatusMessage()) {
             val status = serializer.decodeFromJsonElement(StatusMessage.serializer(), message)
-            if (status.message == "authenticated") {
+            if (status.retMsg == "authenticated") {
                 activeConnection?.isAuthenticated = true
                 listener.onAuthenticated(this)
                 return true
@@ -262,7 +308,7 @@ constructor(
      * If the first byte in the message is an open square bracket, this frame is housing an array
      */
     private fun JsonElement.isStatusMessage() =
-        this is JsonObject && JsonPrimitive(EVENT_TYPE_MESSAGE_KEY).contentOrNull == "status"
+        this is JsonObject && JsonPrimitive(TOPIC_MESSAGE_KEY).contentOrNull == "status"
 }
 
 private class WebSocketConnection(
