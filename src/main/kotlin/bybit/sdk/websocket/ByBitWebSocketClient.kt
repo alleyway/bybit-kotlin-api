@@ -262,7 +262,7 @@ constructor(
                 frame.jsonObject[OPERATION_MESSAGE_KEY]?.jsonPrimitive?.content
             }
 
-            println("\u001b[33m" + frame.toString() + "\u001b[0m")
+//            logger.debug("\u001b[33m" + frame.toString() + "\u001b[0m")
 
             val message = when (frameType) {
                 // TODO: different per endpoint
