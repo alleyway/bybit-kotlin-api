@@ -5,10 +5,9 @@ import kotlinx.coroutines.delay
 import kotlin.system.exitProcess
 
 
-
 suspend fun main() {
     val bybitKey = System.getenv("BYBIT_API_KEY")
-	val bybitSecret = System.getenv("BYBIT_SECRET")
+    val bybitSecret = System.getenv("BYBIT_SECRET")
 
     if (bybitKey.isNullOrEmpty() || bybitSecret.isNullOrEmpty()) {
         println("Make sure you set your BYBIT_API_KEY andBYBIT_SECRET environment variable!")
@@ -27,7 +26,7 @@ suspend fun main() {
 //        println("Got server time asynchronously: $asyncTime")
 //    }
 
-   // deferred.await()
+    // deferred.await()
 //    println("Done getting time asynchronously!")
 //
 //    println("Using options")
@@ -52,13 +51,13 @@ suspend fun main() {
 //    println("\n\nWebsocket sample:")
     websocketSample(bybitKey, bybitSecret)
 
-	exitProcess(0)
+    exitProcess(0)
 
 }
 
 suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
 
-     val options = WSClientConfigurableOptions(true)
+    val options = WSClientConfigurableOptions(true)
 
     val websocketClient = ByBitWebSocketClient(
         ByBitWebSocketCluster.Inverse,
@@ -69,8 +68,8 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
             }
 
             override fun onReceive(
-				client: ByBitWebSocketClient,
-				message: ByBitWebSocketMessage
+                client: ByBitWebSocketClient,
+                message: ByBitWebSocketMessage
             ) {
                 when (message) {
                     is ByBitWebSocketMessage.RawMessage -> println(String(message.data))
@@ -93,7 +92,8 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
         ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "ETHUSD"),
         ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "BTCUSD"),
         ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Liquidations, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Tickers, "BTCUSD")
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Tickers, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebSocketChannel.Shared.Kline.Three_Minutes, "BTCUSD")
     )
 
     websocketClient.connect()

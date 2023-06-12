@@ -45,6 +45,21 @@ sealed class ByBitWebSocketMessage {
     )
 
     @Serializable
+    data class KlineItem(
+        val start: Long,
+        val end: Long,
+        val interval: String,
+        val open: Double,
+        val close: Double,
+        val high: Double,
+        val low: Double,
+        val volume: Double,
+        val turnover: Double,
+        val confirm: Boolean,
+        val timestamp: Long,
+    )
+
+    @Serializable
     sealed class TopicResponse : ByBitWebSocketMessage() {
 
         @SerialName("topic")
@@ -65,6 +80,11 @@ sealed class ByBitWebSocketMessage {
         data class Ticker(
             val cs: Long,
             val data: TickerItem
+        ) : TopicResponse()
+
+        @Serializable
+        data class Kline(
+            @SerialName("data") val data: List<KlineItem>
         ) : TopicResponse()
 
     }
