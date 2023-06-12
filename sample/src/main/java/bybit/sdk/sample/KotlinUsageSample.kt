@@ -60,7 +60,7 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
     val options = WSClientConfigurableOptions(true)
 
     val websocketClient = ByBitWebSocketClient(
-        ByBitWebSocketCluster.Inverse,
+        ByBitEndpoint.Inverse,
         options,
         object : ByBitWebSocketListener {
             override fun onAuthenticated(client: ByBitWebSocketClient) {
@@ -89,12 +89,13 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
         })
 
     val subscriptions = listOf(
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "ETHUSD"),
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Tickers, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Kline.Three_Minutes, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD")
+//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "ETHUSD"),
+//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "BTCUSD"),
+//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD"),
+//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Tickers, "BTCUSD"),
+//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Kline.Three_Minutes, "BTCUSD"),
+//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Orderbook.Level_500, "BTCUSD")
     )
 
     websocketClient.connect()

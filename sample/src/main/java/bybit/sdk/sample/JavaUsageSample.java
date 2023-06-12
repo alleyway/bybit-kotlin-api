@@ -56,7 +56,7 @@ public class JavaUsageSample {
                 new WSClientConfigurableOptions(true);
 
         ByBitWebSocketClient client = new ByBitWebSocketClient(
-                ByBitWebSocketCluster.Spot,
+                ByBitEndpoint.Spot,
                 options,
                 new DefaultByBitWebSocketListener() {
                     @Override

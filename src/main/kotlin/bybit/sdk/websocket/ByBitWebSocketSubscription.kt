@@ -14,12 +14,12 @@ data class ByBitWebSocketSubscription(
 sealed class ByBitWebsocketTopic(val prefix: String, val extra: String = "") {
 
     sealed class Orderbook(depth: String) : ByBitWebsocketTopic("orderbook", depth) {
-        object Level_1 : Kline("1")
-        object Level_25 : Kline("25")
-        object Level_50 : Kline("50")
-        object Level_100 : Kline("100")
-        object Level_200 : Kline("200")
-        object Level_500 : Kline("500")
+        object Level_1 : Orderbook("1")
+        object Level_25 : Orderbook("25")
+        object Level_50 : Orderbook("50")
+        object Level_100 : Orderbook("100")
+        object Level_200 : Orderbook("200")
+        object Level_500 : Orderbook("500")
     }
 
     object Trades : ByBitWebsocketTopic("publicTrade")

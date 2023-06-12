@@ -30,7 +30,7 @@ USDC Option: wss://stream.bybit.com/v5/public/option
  */
 
 
-enum class ByBitWebSocketCluster(internal vararg val pathComponents: String) {
+enum class ByBitEndpoint(internal vararg val pathComponents: String) {
     Spot("v5", "public", "spot"),
     Linear("v5", "public", "linear"),
     Inverse("v5", "public", "inverse"),
@@ -71,7 +71,7 @@ data class WSClientConfigurableOptions(
  *
  * @param apiKey the API key to use with all API requests
  * @param secret the API secret to use with all API requests
- * @param cluster the [ByBitWebSocketCluster] to connect to
+ * @param endpoint the [ByBitEndpoint] to connect to
  * @param listener the [ByBitWebSocketListener] to send events to
  * @param bufferSize the size of the back buffer to use when websocket events start coming in faster than they can be processed. To drop all but the latest event, use [Channel.CONFLATED]
  * @param httpClientProvider (Optional) A provider for the ktor [HttpClient] to use; defaults to [DefaultJvmHttpClientProvider]
@@ -81,7 +81,7 @@ data class WSClientConfigurableOptions(
 class ByBitWebSocketClient
 @JvmOverloads
 constructor(
-    val cluster: ByBitWebSocketCluster,
+    val endpoint: ByBitEndpoint,
     val options: WSClientConfigurableOptions = WSClientConfigurableOptions(),
     private val listener: ByBitWebSocketListener,
     private val bufferSize: Int = Channel.UNLIMITED,
@@ -112,7 +112,7 @@ constructor(
 
 
     /**
-     * Connect and authenticate to the given [ByBitWebSocketCluster].
+     * Connect and authenticate to the given [ByBitEndpoint].
      *
      * Calling from java? see [connectBlocking] and [connectAsync]
      */
@@ -131,7 +131,7 @@ constructor(
 
             url.protocol = URLProtocol.WSS
             url.port = URLProtocol.WSS.defaultPort
-            url.path(*cluster.pathComponents)
+            url.path(*endpoint.pathComponents)
 
             headers["User-Agent"] = Version.userAgent
         }
@@ -265,11 +265,18 @@ constructor(
             println("\u001b[33m" + frame.toString() + "\u001b[0m")
 
             val message = when (frameType) {
+                // TODO: different per endpoint
                 "ping", "subscribe" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
+                "tickers" -> when (endpoint) {
+                    ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(TopicResponse.Ticker.serializer(), frame)
+                    else -> RawMessage(frame.toString().toByteArray())
+                }
+
+                // same for all
                 "publicTrade" -> serializer.decodeFromJsonElement(TopicResponse.PublicTrade.serializer(), frame)
-                "tickers" -> serializer.decodeFromJsonElement(TopicResponse.Ticker.serializer(), frame)
                 "kline" -> serializer.decodeFromJsonElement(TopicResponse.Kline.serializer(), frame)
-                "liquidation" -> serializer.decodeFromJsonElement(TopicResponse.Kline.serializer(), frame)
+                "liquidation" -> serializer.decodeFromJsonElement(TopicResponse.Liquidation.serializer(), frame)
+                "orderbook" -> serializer.decodeFromJsonElement(TopicResponse.Orderbook.serializer(), frame)
                 else -> RawMessage(frame.toString().toByteArray())
             }
 
