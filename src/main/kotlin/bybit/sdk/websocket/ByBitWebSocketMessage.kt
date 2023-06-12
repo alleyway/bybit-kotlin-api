@@ -60,6 +60,15 @@ sealed class ByBitWebSocketMessage {
     )
 
     @Serializable
+    data class LiquidationItem(
+        val price: Double,
+        val side: String,
+        val size: Double,
+        val symbol: String,
+        val updatedTime: Long,
+    )
+
+    @Serializable
     sealed class TopicResponse : ByBitWebSocketMessage() {
 
         @SerialName("topic")
@@ -85,6 +94,11 @@ sealed class ByBitWebSocketMessage {
         @Serializable
         data class Kline(
             @SerialName("data") val data: List<KlineItem>
+        ) : TopicResponse()
+
+        @Serializable
+        data class Liquidation(
+            val data: LiquidationItem
         ) : TopicResponse()
 
     }

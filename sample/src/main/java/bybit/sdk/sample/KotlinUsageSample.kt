@@ -89,11 +89,12 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
         })
 
     val subscriptions = listOf(
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "ETHUSD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Liquidations, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Tickers, "BTCUSD"),
-        ByBitWebSocketSubscription(ByBitWebSocketChannel.Shared.Kline.Three_Minutes, "BTCUSD")
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "ETHUSD"),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Tickers, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Kline.Three_Minutes, "BTCUSD"),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD")
     )
 
     websocketClient.connect()

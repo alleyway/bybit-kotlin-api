@@ -79,7 +79,7 @@ public class JavaUsageSample {
         client.connectBlocking();
 
         List<ByBitWebSocketSubscription> subs = Collections.singletonList(
-                new ByBitWebSocketSubscription(ByBitWebSocketChannel.Contract.Trades.INSTANCE, "BTCUSD"));
+                new ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades.INSTANCE, "BTCUSD"));
         client.subscribeBlocking(subs);
 
         try {

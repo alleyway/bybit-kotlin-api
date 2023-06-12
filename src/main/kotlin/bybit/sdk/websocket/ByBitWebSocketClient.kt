@@ -269,6 +269,7 @@ constructor(
                 "publicTrade" -> serializer.decodeFromJsonElement(TopicResponse.PublicTrade.serializer(), frame)
                 "tickers" -> serializer.decodeFromJsonElement(TopicResponse.Ticker.serializer(), frame)
                 "kline" -> serializer.decodeFromJsonElement(TopicResponse.Kline.serializer(), frame)
+                "liquidation" -> serializer.decodeFromJsonElement(TopicResponse.Kline.serializer(), frame)
                 else -> RawMessage(frame.toString().toByteArray())
             }
 
