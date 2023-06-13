@@ -31,7 +31,7 @@ sealed class ByBitWebSocketMessage {
     )
 
     @Serializable
-    data class TickerItem(
+    data class TickerLinearInverseItem(
         val symbol: String? = null,
         val price24hPcnt: Double? = null,
         val fundingRate: Double? = null,
@@ -42,6 +42,19 @@ sealed class ByBitWebSocketMessage {
         val bid1Size: Double? = null,
         val ask1Price: Double? = null,
         val ask1Size: Double? = null,
+    )
+
+    @Serializable
+    data class TickerSpotItem(
+        val symbol: String? = null,
+        val lastPrice: Double? = null,
+        val highPrice24h: Double? = null,
+        val lowPrice24h: Double? = null,
+        val prevPrice24h: Double? = null,
+        val volume24h: Double? = null,
+        val turnover24h: Double? = null,
+        val price24hPcnt: Double? = null,
+        val usdIndexPrice: Double? = null,
     )
 
     @Serializable
@@ -94,9 +107,15 @@ sealed class ByBitWebSocketMessage {
         ) : TopicResponse()
 
         @Serializable
-        data class Ticker(
+        data class TickerLinearInverse(
             val cs: Long,
-            val data: TickerItem
+            val data: TickerLinearInverseItem
+        ) : TopicResponse()
+
+        @Serializable
+        data class TickerSpot(
+            val cs: Long,
+            val data: TickerSpotItem
         ) : TopicResponse()
 
         @Serializable

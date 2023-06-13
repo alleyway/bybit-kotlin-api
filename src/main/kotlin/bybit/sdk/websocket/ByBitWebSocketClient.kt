@@ -90,7 +90,7 @@ constructor(
     private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider(),
     timer: Timer = Timer()
 
-    ) {
+) {
 
     val task = object : TimerTask() {
         override fun run() {
@@ -291,8 +291,14 @@ constructor(
                 // TODO: different per endpoint
                 "ping", "subscribe" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
                 "tickers" -> when (endpoint) {
-                    ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(TopicResponse.Ticker.serializer(), frame)
-                    else -> RawMessage(frame.toString().toByteArray())
+                    ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(
+                        TopicResponse.TickerLinearInverse.serializer(),
+                        frame
+                    )
+                    ByBitEndpoint.Spot -> serializer.decodeFromJsonElement(TopicResponse.TickerSpot.serializer(), frame)
+                    else -> {
+                        RawMessage(frame.toString().toByteArray())
+                    }
                 }
 
                 // same for all
