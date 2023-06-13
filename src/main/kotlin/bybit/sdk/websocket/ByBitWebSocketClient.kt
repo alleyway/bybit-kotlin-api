@@ -16,6 +16,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
+import java.util.*
 
 private const val TOPIC_MESSAGE_KEY = "topic"
 private const val OPERATION_MESSAGE_KEY = "op"
@@ -42,7 +43,8 @@ enum class ByBitEndpoint(internal vararg val pathComponents: String) {
 data class WSClientConfigurableOptions(
     val testnet: Boolean = true,
     val key: String? = null,
-    val secret: String? = null
+    val secret: String? = null,
+    val pingInterval: Long = 10000
 ) {
     constructor(testnet: Boolean) : this(testnet, null, null) {
 
@@ -86,8 +88,19 @@ constructor(
     private val listener: ByBitWebSocketListener,
     private val bufferSize: Int = Channel.UNLIMITED,
     private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider(),
+    timer: Timer = Timer()
 
     ) {
+
+    val task = object : TimerTask() {
+        override fun run() {
+            sendPingAsync(null)
+        }
+    }
+
+    init {
+        timer.scheduleAtFixedRate(task, 20000L, options.pingInterval)
+    }
 
     private val serializer by lazy {
         Json {
@@ -148,9 +161,7 @@ constructor(
         } catch (ex: Exception) {
             listener.onError(this, ex)
         }
-
-        // send a quick ping test
-        session.send("""{"req_id": "100001", "op": "ping"}""");
+        sendPing()
     }
 
     /** Blocking version of [connect] */
@@ -159,6 +170,18 @@ constructor(
     /** Async/callback version of [connect] */
     fun connectAsync(callback: ByBitCompletionCallback?) =
         coroutineToCompletionCallback(callback, coroutineScope) { connect() }
+
+    suspend fun sendPing() {
+        activeConnection?.webSocketSession?.send("""{"req_id": "100001", "op": "ping"}""")
+    }
+
+    /** Blocking version of [sendPing] */
+    fun sendPingBlocking() = runBlocking { sendPing() }
+
+    /** Async/callback version of [sendPing] */
+    fun sendPingAsync(callback: ByBitCompletionCallback?) =
+        coroutineToCompletionCallback(callback, coroutineScope) { sendPing() }
+
 
     /**
      * Subscribe to one or more data streams. Be sure to subscribe to streams available in the
