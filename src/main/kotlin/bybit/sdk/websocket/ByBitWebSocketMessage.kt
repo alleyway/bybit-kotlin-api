@@ -54,7 +54,7 @@ sealed class ByBitWebSocketMessage {
         val volume24h: Double? = null,
         val turnover24h: Double? = null,
         val price24hPcnt: Double? = null,
-        val usdIndexPrice: Double? = null,
+        val usdIndexPrice: String? = null,
     )
 
     @Serializable
