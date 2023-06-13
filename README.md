@@ -29,6 +29,9 @@ To use the SDK in a Maven project:
 ```
 
 
+Look in the *sample* project for examples in Java or Kotlin.
+
+
 ## Developer's Notes
 
 ### Deployment
