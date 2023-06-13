@@ -1,5 +1,35 @@
 # ByBit JVM Client SDK written in Kotlin
 
+NOTE: this library is in early development stages. There is NO WARRANTY.
+
+File an issue if you'd to add more functionality!
+
+**Maintainers wanted!** Pull requests greatly appreciated/wanted!
+
+
+To use the SDK in a Gradle project:
+
+```groovy
+
+dependencies {
+    implementation 'io.github.alleyway:bybit-kotlin-api:vX.Y.Z' 
+}
+
+```
+
+To use the SDK in a Maven project:
+
+```xml
+<dependency>
+    <groupId>io.github.alleyway</groupId>
+    <artifactId>bybit-kotlin-api</artifactId>
+    <version>vX.Y.Z</version>
+</dependency>
+
+```
+
+
+## Developer's Notes
 
 ### Deployment
 
