@@ -23,11 +23,11 @@ sealed class ByBitWebSocketMessage {
 
     @Serializable
     data class PublicTradeItem(
-        @SerialName("T") val timestamp: Long? = null,
-        @SerialName("s") val symbol: String? = null,
-        @SerialName("S") val side: String? = null,
-        @SerialName("v") val volume: Double? = null,
-        @SerialName("p") val price: Double? = null,
+        @SerialName("T") val timestamp: Long,
+        @SerialName("s") val symbol: String,
+        @SerialName("S") val side: String,
+        @SerialName("v") val volume: Double,
+        @SerialName("p") val price: Double,
     )
 
     @Serializable
