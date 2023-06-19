@@ -3,26 +3,42 @@ package bybit.sdk.rest.order
 import bybit.sdk.ext.coroutineToRestCallback
 import bybit.sdk.rest.ByBitRestApiCallback
 import bybit.sdk.rest.ByBitRestClient
-import bybit.sdk.rest.ByBitRestOption
+import bybit.sdk.rest.RequestIterator
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 
 class ByBitOrderClient
 internal constructor(internal val byBitRestClient: ByBitRestClient) {
 
-    @SafeVarargs
-    fun placeOrderBlocking(
-        params: PlaceOrderParams,
-        vararg opts: ByBitRestOption
-    ): PlaceOrderResponse =
-        runBlocking { placeOrder(params, *opts) }
+    fun placeOrderBlocking(params: PlaceOrderParams):
+            PlaceOrderResponse = runBlocking { placeOrder(params) }
 
     /** See [placeOrderBlocking] */
-    @SafeVarargs
     fun placeOrder(
         params: PlaceOrderParams,
-        callback: ByBitRestApiCallback<PlaceOrderResponse>,
-        vararg opts: ByBitRestOption
-    ) = coroutineToRestCallback(callback, { placeOrder(params, *opts) })
+        callback: ByBitRestApiCallback<PlaceOrderResponse>
+    ) = coroutineToRestCallback(callback, { placeOrder(params) })
 
+
+    fun orderHistoryBlocking(params: OrderHistoryParams):
+            OrderHistoryResponse = runBlocking { orderHistory(params) }
+
+    /** See [orderHistoryBlocking] */
+    fun orderHistory(
+        params: OrderHistoryParams,
+        callback: ByBitRestApiCallback<OrderHistoryResponse>
+    ) = coroutineToRestCallback(callback, { orderHistory(params) })
+
+    @SafeVarargs
+    fun orderHistoryPaginated(
+        params: OrderHistoryParams,
+    ): RequestIterator<OrderHistoryResultItem> =
+        RequestIterator(
+            { orderHistoryBlocking(params) },
+            byBitRestClient.requestIteratorCall<OrderHistoryResponse>(
+                HttpMethod.Get,
+                false
+            )
+        )
 
 }

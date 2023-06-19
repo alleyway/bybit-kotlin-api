@@ -11,6 +11,15 @@ open class APIResponseV5(
 	val time: Long = 0
 )
 
+
+@Serializable
+abstract class APIResponseV5Paginatable<T>(
+	val retCode: Int = 0,
+	val retMsg: String = "OK",
+	val time: Long = 0
+) : Paginatable<T>
+
+
 @Serializable
 data class APIResponse(
 

@@ -1,6 +1,5 @@
 package bybit.sdk.rest.market
 
-import bybit.sdk.rest.ByBitRestOption
 import bybit.sdk.rest.ListResult
 import bybit.sdk.rest.Paginatable
 import com.thinkinglogic.builder.annotation.Builder
@@ -11,10 +10,9 @@ import kotlinx.serialization.Serializable
 /** See [ByBitRestClient.getInstrumentsInfoBlocking] */
 @SafeVarargs
 suspend fun ByBitMarketClient.getInstrumentsInfo(
-    params: GetInstrumentsInfoParamsV5,
-    vararg opts: ByBitRestOption
+    params: GetInstrumentsInfoParamsV5
 ): TickersDTO =
-    byBitRestClient.fetchResult({
+    byBitRestClient.call({
         path(
             "v5",
             "market",
@@ -25,7 +23,7 @@ suspend fun ByBitMarketClient.getInstrumentsInfo(
         params.baseCoin?.let { parameters["baseCoin"] = it }
         params.limit?.let { parameters["limit"] = it.toString() }
         parameters["status"] = "Trading"
-    }, *opts)
+    })
 
 @Builder
 data class GetInstrumentsInfoParamsV5(

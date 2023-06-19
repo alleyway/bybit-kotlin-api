@@ -1,15 +1,28 @@
 package bybit.sdk
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
+
+@Serializable
+data class Error(val retCode: Int, val retMsg: String)
+
+class CustomResponseException(response: HttpResponse, cachedResponseText: String) :
+    ResponseException(response, cachedResponseText) {
+    override val message: String = "Custom server error: ${response.call.request.url}. " +
+            "HTTP Status: ${response.status} Text: \"$cachedResponseText\""
+}
+
 
 interface HttpClientProvider {
     fun buildClient(): HttpClient
@@ -62,6 +75,36 @@ constructor(
                     isLenient = true
                     ignoreUnknownKeys = true
                 })
+            }
+            HttpResponseValidator {
+                validateResponse { response ->
+
+                    if (!response.headers.get("ret_code").equals("0")) {
+                        if (response.status.value !== 200) {
+                            println("error: ${response.status.description}")
+
+                            println(response.bodyAsText())
+
+                        } else {
+                            val error: Error = response.body()
+                            if (error.retCode != 0) {
+                                throw CustomResponseException(
+                                    response,
+                                    "Code: ${error.retCode}, message: ${error.retMsg}"
+                                )
+                            }
+                        }
+
+                    }
+
+                }
+////                handleResponseExceptionWithRequest { exception, request ->
+////                    val clientException = exception as? ClientRequestException ?: return@handleResponseExceptionWithRequest
+////                    val exceptionResponse = clientException.response
+////                    if (exceptionResponse.status == HttpStatusCode.NotFound) {
+////                        val exceptionResponseText = exceptionResponse.bodyAsText()
+////                        throw MissingPageException(exceptionResponse, exceptionResponseText)
+////                    }
             }
         }
 

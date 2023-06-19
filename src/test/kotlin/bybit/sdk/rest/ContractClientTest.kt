@@ -7,20 +7,13 @@ import kotlin.test.assertTrue
 
 internal class ContractClientTest {
 
+	private var client: ByBitRestClient = ByBitRestClient(httpClientProvider = okHttpClientProvider)
 
 	@Test
 	fun getServerTime() {
 		println("getServerTime()")
 
-		val bybitKey = "blah"
-		val bybitSecret = "blah"
-
-		val bybitClient = ByBitRestClient(
-			bybitKey, bybitSecret,
-			true,
-			httpClientProvider = okHttpClientProvider
-		)
-		val resp = bybitClient.contractClient.getServerTimeBlocking()
+		val resp = client.contractClient.getServerTimeBlocking()
 		assertEquals(0, resp.retCode)
 		assertEquals("OK", resp.retMsg)
 	}
