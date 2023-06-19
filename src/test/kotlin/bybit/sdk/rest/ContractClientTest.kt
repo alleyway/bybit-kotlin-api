@@ -17,6 +17,7 @@ internal class ContractClientTest {
 
 		val bybitClient = ByBitRestClient(
 			bybitKey, bybitSecret,
+			true,
 			httpClientProvider = okHttpClientProvider
 		)
 		val resp = bybitClient.contractClient.getServerTimeBlocking()
