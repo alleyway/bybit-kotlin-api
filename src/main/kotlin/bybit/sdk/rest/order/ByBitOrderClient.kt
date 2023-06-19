@@ -38,7 +38,6 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
         callback: ByBitRestApiCallback<OrderHistoryResponse>
     ) = coroutineToRestCallback(callback, { orderHistory(params) })
 
-    @SafeVarargs
     fun orderHistoryPaginated(
         params: OrderHistoryParams,
     ): RequestIterator<OrderHistoryResultItem> =
@@ -49,5 +48,26 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
                 false
             )
         )
+
+    fun ordersOpenBlocking(params: OrdersOpenParams):
+            OrdersOpenResponse = runBlocking { ordersOpen(params) }
+
+    /** See [orderHistoryBlocking] */
+    fun orderOpen(
+        params: OrdersOpenParams,
+        callback: ByBitRestApiCallback<OrdersOpenResponse>
+    ) = coroutineToRestCallback(callback, { ordersOpen(params) })
+
+    fun ordersOpenPaginated(
+        params: OrdersOpenParams,
+    ): RequestIterator<OrdersOpenResultItem> =
+        RequestIterator(
+            { ordersOpenBlocking(params) },
+            byBitRestClient.requestIteratorCall<OrdersOpenResponse>(
+                HttpMethod.Get,
+                false
+            )
+        )
+
 
 }

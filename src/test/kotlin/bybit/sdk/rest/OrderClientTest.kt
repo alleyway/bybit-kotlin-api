@@ -64,6 +64,16 @@ internal class OrderClientTest {
 		assertEquals("OK", cancelOrderResp.retMsg)
 	}
 
+	@Test
+	fun ordersOpenTest() {
+		val resp = client.orderClient.ordersOpenPaginated(
+			OrdersOpenParams("spot")
+		)
+		val items = resp.asSequence().toList()
+		assertTrue(items.size > 0)
+	}
+
+
 
 	@Test
 	fun secondTest() {
