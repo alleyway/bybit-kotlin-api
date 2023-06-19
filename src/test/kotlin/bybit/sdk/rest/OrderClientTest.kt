@@ -1,10 +1,7 @@
 package bybit.sdk.rest
 
 
-import bybit.sdk.rest.order.OrderHistoryParams
-import bybit.sdk.rest.order.OrderType
-import bybit.sdk.rest.order.PlaceOrderParams
-import bybit.sdk.rest.order.Side
+import bybit.sdk.rest.order.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -44,12 +41,27 @@ internal class OrderClientTest {
 
 		val resp = client.orderClient.placeOrderBlocking(
 			PlaceOrderParams("spot",
-				"BTCUSDT", Side.Buy, OrderType.Market,
-				"10")
+				"BTCUSDT", Side.Buy, OrderType.Limit,
+				"0.1",
+				price = 24_000.toString()
+				)
 		)
+
+		val orderId = resp.result.orderId
 
 		assertEquals(0, resp.retCode)
 		assertEquals("OK", resp.retMsg)
+
+		Thread.sleep(5000)
+
+		val cancelOrderResp = client.orderClient.cancelOrderBlocking(
+			CancelOrderParams("spot",
+				"BTCUSDT",
+				orderId
+			)
+		)
+		assertEquals(0, cancelOrderResp.retCode)
+		assertEquals("OK", cancelOrderResp.retMsg)
 	}
 
 

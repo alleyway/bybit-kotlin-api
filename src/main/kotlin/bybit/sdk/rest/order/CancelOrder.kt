@@ -7,46 +7,40 @@ import kotlinx.serialization.Serializable
 
 
 @SafeVarargs
-suspend fun ByBitOrderClient.placeOrder(
-    params: PlaceOrderParams
-): PlaceOrderResponse =
+suspend fun ByBitOrderClient.cancelOrder(
+    params: CancelOrderParams
+): CancelOrderResponse =
     byBitRestClient.call({
         path(
             "v5",
             "order",
-            "create",
+            "cancel",
         )
         params.category.let { parameters["category"] = it }
         params.symbol.let { parameters["symbol"] = it }
-        params.side.let { parameters["side"] = it.value }
-        params.orderType.let { parameters["orderType"] = it.value }
-        params.qty.let { parameters["qty"] = it }
-        params.price?.let { parameters["price"] = it }
+        params.orderId?.let { parameters["orderId"] = it }
         params.orderLinkId?.let { parameters["orderLinkId"] = it }
     }, HttpMethod.Post, false)
 
 
 @Builder
-data class PlaceOrderParams(
+data class CancelOrderParams(
     val category: String, // 'spot' | 'linear' | 'inverse' | 'option'
     val symbol: String,
-    val side: Side,
-    val orderType: OrderType = OrderType.Market,
-    val qty: String,
-    val price: String? = null,
+    val orderId: String? = null,
     val orderLinkId: String? = null
 )
 
 @Serializable
-data class PlaceOrderResult(
+data class CancelOrderResult(
     val orderId: String,
     val orderLinkId: String
 )
 
 
 @Serializable
-data class PlaceOrderResponse(
-    val result: PlaceOrderResult
+data class CancelOrderResponse(
+    val result: CancelOrderResult
 ) : APIResponseV5()
 
 
