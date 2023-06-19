@@ -41,12 +41,12 @@ enum class ByBitEndpoint(internal vararg val pathComponents: String) {
 
 
 data class WSClientConfigurableOptions(
-    val testnet: Boolean = true,
     val key: String? = null,
     val secret: String? = null,
+    val testnet: Boolean = true,
     val pingInterval: Long = 10000
 ) {
-    constructor(testnet: Boolean) : this(testnet, null, null) {
+    constructor(testnet: Boolean) : this(null, null, testnet) {
 
     }
 }
