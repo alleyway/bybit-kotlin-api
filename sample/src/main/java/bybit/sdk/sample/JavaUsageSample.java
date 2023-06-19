@@ -17,7 +17,7 @@ public class JavaUsageSample {
             System.exit(1);
         }
 
-        ByBitRestClient client = new ByBitRestClient(bybitKey, bybitSecret);
+        ByBitRestClient client = new ByBitRestClient(bybitKey, bybitSecret, true);
 
 //        System.out.println("Blocking for markets...");
 //        final MarketsDTO markets = client.getReferenceClient().getSupportedMarketsBlocking();
