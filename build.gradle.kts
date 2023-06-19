@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
-
 project.version = "0.1-SNAPSHOT"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
@@ -8,8 +6,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.21")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.22")
     }
 }
 
@@ -17,9 +15,9 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    kotlin("jvm") version "1.8.21"
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt") version "1.8.21"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.serialization") version "1.8.22"
+    kotlin("kapt") version "1.8.22"
 }
 
 //tasks.withType<KaptGenerateStubs> {
@@ -35,7 +33,7 @@ plugins {
 dependencies {
 
     implementation("ch.qos.logback:logback-classic:1.2.9")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
 
     val ktorVersion = "2.3.1"
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
@@ -85,17 +83,17 @@ tasks {
 
     kapt {
         kotlin {
-            jvmToolchain(17)
+            jvmToolchain(11)
         }
     }
 
     compileJava {
-        targetCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
     }
 
     compileKotlin {
 
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
 

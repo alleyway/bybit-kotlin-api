@@ -24,14 +24,23 @@ class ByBitRestClient
 constructor(
 	private val apiKey: String,
 	private val secret: String,
-	private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider(),
-	private val bybitApiDomain: String = "api-testnet.bybit.com"
+    testnet: Boolean,
+    private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider()
 ) {
-
 
 	val contractClient by lazy { ByBitContractClient(this) }
 
     val marketClient by lazy { ByBitMarketClient(this) }
+
+    private var bybitApiDomain: String
+
+    init {
+        bybitApiDomain = if (testnet) {
+            "api-testnet.bybit.com"
+        } else {
+            "api.bybit.com"
+        }
+    }
 
     private val baseUrlBuilder: URLBuilder
         get() = httpClientProvider.getDefaultRestURLBuilder().apply {
@@ -47,7 +56,7 @@ constructor(
         vararg options: ByBitRestOption
     ): T {
         val url = baseUrlBuilder.apply(urlBuilderBlock).build()
-        var body = withHttpClient { httpClient ->
+        val body = withHttpClient { httpClient ->
             httpClient.get(url) {
                 options.forEach { this.it() }
 
