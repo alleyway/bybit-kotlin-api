@@ -6,20 +6,13 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class MarketClientTest {
+    private var client: ByBitRestClient = ByBitRestClient(httpClientProvider = okHttpClientProvider)
 
 
     @Test
     fun getInstrumentsInfo() {
 
-        val bybitKey = "blah"
-        val bybitSecret = "blah"
-
-        val bybitClient = ByBitRestClient(
-            bybitKey, bybitSecret,
-            testnet = true,
-            httpClientProvider = okHttpClientProvider
-        )
-        val resp = bybitClient.marketClient.getInstrumentsInfoBlocking(
+        val resp = client.marketClient.getInstrumentsInfoBlocking(
             GetInstrumentsInfoParamsV5(
                 category = "inverse"
             )
@@ -31,21 +24,14 @@ internal class MarketClientTest {
     @Test
     fun listSupportedInstruments() {
 
-        val bybitKey = "blah"
-        val bybitSecret = "blah"
 
-        val bybitClient = ByBitRestClient(
-            bybitKey, bybitSecret,
-            testnet = true,
-            httpClientProvider = okHttpClientProvider
-        )
         val params = GetInstrumentsInfoParamsV5(
             limit = 10, // apparently not allowed to pass a limit for spot
             category = "inverse"
 //			category = "linear"
         )
 
-        val resp = bybitClient.marketClient.listSupportedInstruments(params).asSequence().toList()
+        val resp = client.marketClient.listSupportedInstruments(params).asSequence().toList()
 
         resp.forEach {
             println(it.symbol)

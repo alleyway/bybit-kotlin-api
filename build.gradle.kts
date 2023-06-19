@@ -74,6 +74,9 @@ allprojects {
 tasks {
 
     publishing {
+        processResources {
+            exclude("bybit.properties")
+        }
 
     }
 

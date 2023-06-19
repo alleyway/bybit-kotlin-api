@@ -3,8 +3,10 @@ package bybit.sdk.rest
 import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
+import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.contract.ByBitContractClient
 import bybit.sdk.rest.market.ByBitMarketClient
+import bybit.sdk.rest.order.ByBitOrderClient
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -22,19 +24,40 @@ import kotlinx.coroutines.runBlocking
 class ByBitRestClient
 @JvmOverloads
 constructor(
-	private val apiKey: String,
-	private val secret: String,
+	private val apiKey: String?,
+	private val secret: String?,
     testnet: Boolean,
     private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider()
 ) {
+
+    constructor() : this(
+        ByBitProperties.APIKEY,
+        ByBitProperties.SECRET,
+        ByBitProperties.TESTNET
+    )
+
+    constructor(httpClientProvider: HttpClientProvider) : this(
+        ByBitProperties.APIKEY,
+        ByBitProperties.SECRET,
+        ByBitProperties.TESTNET,
+        httpClientProvider
+    )
+
 
 	val contractClient by lazy { ByBitContractClient(this) }
 
     val marketClient by lazy { ByBitMarketClient(this) }
 
+    val orderClient by lazy { ByBitOrderClient(this) }
+
     private var bybitApiDomain: String
 
     init {
+
+        if (apiKey == null || secret == null) {
+            throw Exception("You must specify ByBit apikey/secret!")
+        }
+
         bybitApiDomain = if (testnet) {
             "api-testnet.bybit.com"
         } else {
@@ -45,7 +68,7 @@ constructor(
     private val baseUrlBuilder: URLBuilder
         get() = httpClientProvider.getDefaultRestURLBuilder().apply {
             host = bybitApiDomain
-            parameters["apiKey"] = apiKey
+            if (!apiKey.isNullOrEmpty()) parameters["apiKey"] = apiKey
         }
 
     private inline fun <R> withHttpClient(codeBlock: (client: HttpClient) -> R) =
