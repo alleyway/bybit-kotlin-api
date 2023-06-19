@@ -79,7 +79,7 @@ constructor(
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (!response.headers.get("ret_code").equals("0")) {
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
                         if (response.status.value !== 200) {
                             println("error: ${response.status.description}")
 
@@ -98,13 +98,6 @@ constructor(
                     }
 
                 }
-////                handleResponseExceptionWithRequest { exception, request ->
-////                    val clientException = exception as? ClientRequestException ?: return@handleResponseExceptionWithRequest
-////                    val exceptionResponse = clientException.response
-////                    if (exceptionResponse.status == HttpStatusCode.NotFound) {
-////                        val exceptionResponseText = exceptionResponse.bodyAsText()
-////                        throw MissingPageException(exceptionResponse, exceptionResponseText)
-////                    }
             }
         }
 

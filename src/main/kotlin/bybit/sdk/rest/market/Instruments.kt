@@ -39,7 +39,7 @@ data class GetInstrumentsInfoParamsV5(
 data class TickersListResult(
     override val category: String,
     override val list: List<TickerDTO>,
-    override val nextPageCursor: String?
+    override val nextPageCursor: String? = ""
 ) : ListResult<TickerDTO> {
 }
 
@@ -60,17 +60,40 @@ enum class ContractType {
     LinearFutures
 }
 
+/*
+{
+        "symbol": "SUIHT",
+        "baseCoin": "SUI",
+        "quoteCoin": "HT",
+        "innovation": "0",
+        "status": "Trading",
+        "marginTrading": "none",
+        "lotSizeFilter": {
+          "basePrecision": "0.01",
+          "quotePrecision": "0.01",
+          "minOrderQty": "0.01",
+          "maxOrderQty": "5000",
+          "minOrderAmt": "0.01",
+          "maxOrderAmt": "5000"
+        },
+        "priceFilter": {
+          "tickSize": "0.01"
+        }
+      },
+ */
+
+
 @Serializable
 data class TickerDTO(
     val symbol: String,
-    val contractType: ContractType,
+//    val contractType: ContractType,
     //status: InstrumentStatusV5;
-    val baseCoin: String,
-    val quoteCoin: String,
-    val launchTime: String,
-    val deliveryTime: String?,
-    val deliveryFeeRate: String?,
-    val priceScale: String,
+    val baseCoin: String?,
+    val quoteCoin: String?,
+//    val launchTime: String?,
+//    val deliveryTime: String?,
+//    val deliveryFeeRate: String?,
+//    val priceScale: String?,
 //    leverageFilter: {
 //        minLeverage: string;
 //        maxLeverage: string;
@@ -87,8 +110,8 @@ data class TickerDTO(
 //        qtyStep: string;
 //        postOnlyMaxOrderQty?: string;
 //    }
-    val unifiedMarginTrade: Boolean,
-    val fundingInterval: Int,
-    val settleCoin: String
+//    val unifiedMarginTrade: Boolean?,
+//    val fundingInterval: Int?,
+//    val settleCoin: String?
 
 )
