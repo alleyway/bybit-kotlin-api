@@ -18,8 +18,8 @@ suspend fun ByBitOrderClient.placeOrder(
         )
         params.category.let { parameters["category"] = it }
         params.symbol.let { parameters["symbol"] = it }
-        params.side.let { parameters["side"] = it.value }
-        params.orderType.let { parameters["orderType"] = it.value }
+        params.side.let { parameters["side"] = it.toString() }
+        params.orderType.let { parameters["orderType"] = it.toString() }
         params.qty.let { parameters["qty"] = it }
         params.price?.let { parameters["price"] = it }
         params.orderLinkId?.let { parameters["orderLinkId"] = it }

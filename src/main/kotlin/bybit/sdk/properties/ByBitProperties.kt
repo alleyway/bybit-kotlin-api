@@ -12,7 +12,7 @@ object ByBitProperties {
 
     val APIKEY: String? = PropertyUtil.getProperty(
         BYBIT_PROPERTIES_FILE, BYBIT_DEFAULT_PROPERTIES_FILE,
-        APIKEY_KEY, "BLAH"
+        APIKEY_KEY
     )
     private const val SECRET_KEY = "secret"
 
