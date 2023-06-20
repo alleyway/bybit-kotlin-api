@@ -1,7 +1,11 @@
 package bybit.sdk.rest
 
 
-import bybit.sdk.rest.order.*
+import bybit.sdk.rest.order.CancelOrderParams
+import bybit.sdk.rest.order.OrderHistoryParams
+import bybit.sdk.rest.order.OrdersOpenParams
+import bybit.sdk.rest.order.PlaceOrderParams
+import bybit.sdk.shared.Category
 import bybit.sdk.shared.OrderType
 import bybit.sdk.shared.Side
 import kotlin.test.Test
@@ -18,7 +22,7 @@ internal class OrderClientTest {
 	fun orderHistoryTest() {
 
 		val resp = client.orderClient.orderHistoryBlocking(
-			OrderHistoryParams("spot", "BTCUSDT"))
+			OrderHistoryParams(Category.spot, "BTCUSDT"))
 
 		assertEquals(0, resp.retCode)
 		assertEquals("OK", resp.retMsg)
@@ -28,7 +32,7 @@ internal class OrderClientTest {
 	fun orderHistoryPaginatedTest() {
 
 		val resp = client.orderClient.orderHistoryPaginated(
-			OrderHistoryParams("spot", "BTCUSDT", limit= 1)).asSequence().toList()
+			OrderHistoryParams(Category.spot, "BTCUSDT", limit= 1)).asSequence().toList()
 
 		resp.forEach {
 			println(it.orderId)
@@ -42,7 +46,7 @@ internal class OrderClientTest {
 	fun placeOrderTest() {
 
 		val resp = client.orderClient.placeOrderBlocking(
-			PlaceOrderParams("spot",
+			PlaceOrderParams(Category.spot,
 				"BTCUSDT", Side.Buy, OrderType.Limit,
 				"0.1",
 				price = 24_000.toString()
@@ -57,7 +61,7 @@ internal class OrderClientTest {
 		Thread.sleep(5000)
 
 		val cancelOrderResp = client.orderClient.cancelOrderBlocking(
-			CancelOrderParams("spot",
+			CancelOrderParams(Category.spot,
 				"BTCUSDT",
 				orderId
 			)
@@ -69,7 +73,7 @@ internal class OrderClientTest {
 	@Test
 	fun ordersOpenTest() {
 		val resp = client.orderClient.ordersOpenPaginated(
-			OrdersOpenParams("spot")
+			OrdersOpenParams(Category.spot)
 		)
 		val items = resp.asSequence().toList()
 		assertTrue(items.size > 0)

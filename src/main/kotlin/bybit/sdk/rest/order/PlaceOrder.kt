@@ -1,6 +1,7 @@
 package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5
+import bybit.sdk.shared.Category
 import bybit.sdk.shared.OrderType
 import bybit.sdk.shared.Side
 import com.thinkinglogic.builder.annotation.Builder
@@ -17,7 +18,7 @@ suspend fun ByBitOrderClient.placeOrder(
             "order",
             "create",
         )
-        params.category.let { parameters["category"] = it }
+        params.category.let { parameters["category"] = it.toString() }
         params.symbol.let { parameters["symbol"] = it }
         params.side.let { parameters["side"] = it.toString() }
         params.orderType.let { parameters["orderType"] = it.toString() }
@@ -29,7 +30,7 @@ suspend fun ByBitOrderClient.placeOrder(
 
 @Builder
 data class PlaceOrderParams(
-    val category: String, // 'spot' | 'linear' | 'inverse' | 'option'
+    val category: Category,
     val symbol: String,
     val side: Side,
     val orderType: OrderType = OrderType.Market,

@@ -2,6 +2,7 @@ package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
+import bybit.sdk.shared.Category
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -17,7 +18,7 @@ suspend fun ByBitOrderClient.orderHistory(
             "order",
             "history",
         )
-        params.category.let { parameters["category"] = it }
+        params.category.let { parameters["category"] = it.toString() }
         params.symbol?.let { parameters["symbol"] = it }
         params.limit?.let { parameters["limit"] = it.toString() }
     }, HttpMethod.Get, false)
@@ -25,7 +26,7 @@ suspend fun ByBitOrderClient.orderHistory(
 
 @Builder
 data class OrderHistoryParams(
-    val category: String, // 'spot' | 'linear' | 'inverse' | 'option'
+    val category: Category,
     val symbol: String?,
     val limit: Int? = null
     )
@@ -39,7 +40,7 @@ data class OrderHistoryResultItem(
 
 @Serializable
 data class OrderHistoryListResult(
-    override val category: String,
+    override val category: Category,
     override val list: List<OrderHistoryResultItem>,
     override val nextPageCursor: String?
 ) : ListResult<OrderHistoryResultItem> {

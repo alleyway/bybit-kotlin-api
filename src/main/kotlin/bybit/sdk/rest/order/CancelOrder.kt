@@ -1,6 +1,7 @@
 package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5
+import bybit.sdk.shared.Category
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -15,7 +16,7 @@ suspend fun ByBitOrderClient.cancelOrder(
             "order",
             "cancel",
         )
-        params.category.let { parameters["category"] = it }
+        params.category.let { parameters["category"] = it.toString() }
         params.symbol.let { parameters["symbol"] = it }
         params.orderId?.let { parameters["orderId"] = it }
         params.orderLinkId?.let { parameters["orderLinkId"] = it }
@@ -24,7 +25,7 @@ suspend fun ByBitOrderClient.cancelOrder(
 
 @Builder
 data class CancelOrderParams(
-    val category: String, // 'spot' | 'linear' | 'inverse' | 'option'
+    val category: Category,
     val symbol: String,
     val orderId: String? = null,
     val orderLinkId: String? = null

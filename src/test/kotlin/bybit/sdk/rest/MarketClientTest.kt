@@ -2,6 +2,7 @@ package bybit.sdk.rest
 
 
 import bybit.sdk.rest.market.InstrumentsInfoParams
+import bybit.sdk.shared.Category
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,7 +16,7 @@ internal class MarketClientTest {
 
         val resp = client.marketClient.getInstrumentsInfoBlocking(
             InstrumentsInfoParams(
-                category = "inverse"
+                category = Category.inverse
             )
         )
 		assertEquals(0, resp.retCode)
@@ -27,7 +28,7 @@ internal class MarketClientTest {
 
         val params = InstrumentsInfoParams(
             limit = 4, // apparently not allowed to pass a limit for spot
-            category = "inverse"
+            category = Category.inverse
 //			category = "linear"
         )
 

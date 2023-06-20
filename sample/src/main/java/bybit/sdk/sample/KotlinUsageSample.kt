@@ -57,7 +57,7 @@ suspend fun main() {
 
 suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
 
-    val options = WSClientConfigurableOptions(true)
+    val options = WSClientConfigurableOptions(bybitKey,bybitSecret,true)
 
     val websocketClient = ByBitWebSocketClient(
         ByBitEndpoint.Inverse,

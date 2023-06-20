@@ -5,8 +5,3 @@ enum class OrderType {
     Market
 }
 
-
-enum class Side {
-    Buy,
-    Sell
-}

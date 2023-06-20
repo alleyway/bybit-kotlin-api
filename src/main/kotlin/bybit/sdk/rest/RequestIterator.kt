@@ -1,5 +1,6 @@
 package bybit.sdk.rest
 
+import bybit.sdk.shared.Category
 import java.util.*
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
@@ -10,7 +11,7 @@ import java.util.stream.StreamSupport
 
 
 interface ListResult<T> {
-    val category: String
+    val category: Category
     val list: List<T>
     val nextPageCursor: String?
 }

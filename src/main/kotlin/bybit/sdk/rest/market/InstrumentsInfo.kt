@@ -2,6 +2,7 @@ package bybit.sdk.rest.market
 
 import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
+import bybit.sdk.shared.Category
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -18,7 +19,7 @@ suspend fun ByBitMarketClient.getInstrumentsInfo(
             "market",
             "instruments-info",
         )
-        params.category.let { parameters["category"] = it }
+        params.category.let { parameters["category"] = it.toString() }
         params.symbol?.let { parameters["symbol"] = it }
         params.baseCoin?.let { parameters["baseCoin"] = it }
         params.limit?.let { parameters["limit"] = it.toString() }
@@ -27,7 +28,7 @@ suspend fun ByBitMarketClient.getInstrumentsInfo(
 
 @Builder
 data class InstrumentsInfoParams(
-    val category: String, // 'spot' | 'linear' | 'inverse' | 'option'
+    val category: Category,
     // status?
     val symbol: String? = null,
     val baseCoin: String? = null,
@@ -71,7 +72,7 @@ data class InstrumentsInfoResultItem(
 
 @Serializable
 data class InstrumentsInfoListResult(
-    override val category: String,
+    override val category: Category,
     override val list: List<InstrumentsInfoResultItem>,
     override val nextPageCursor: String? = ""
 ) : ListResult<InstrumentsInfoResultItem> {
