@@ -1,17 +1,17 @@
 package bybit.sdk.rest.market
 
+import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
-import bybit.sdk.rest.Paginatable
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 
 /** See [ByBitRestClient.getInstrumentsInfoBlocking] */
-@SafeVarargs
+
 suspend fun ByBitMarketClient.getInstrumentsInfo(
-    params: GetInstrumentsInfoParamsV5
-): TickersDTO =
+    params: InstrumentsInfoParams
+): InstrumentsInfoResponse =
     byBitRestClient.call({
         path(
             "v5",
@@ -26,7 +26,7 @@ suspend fun ByBitMarketClient.getInstrumentsInfo(
     })
 
 @Builder
-data class GetInstrumentsInfoParamsV5(
+data class InstrumentsInfoParams(
     val category: String, // 'spot' | 'linear' | 'inverse' | 'option'
     // status?
     val symbol: String? = null,
@@ -36,55 +36,7 @@ data class GetInstrumentsInfoParamsV5(
 )
 
 @Serializable
-data class TickersListResult(
-    override val category: String,
-    override val list: List<TickerDTO>,
-    override val nextPageCursor: String? = ""
-) : ListResult<TickerDTO> {
-}
-
-@Serializable
-data class TickersDTO(
-    val retCode: Int = 0,
-    val retMsg: String = "OK",
-    val time: Long = 0,
-    override val result: TickersListResult? = null,
-    override var nextUrl: String? = "",
-) : Paginatable<TickerDTO>
-
-@Serializable
-enum class ContractType {
-    InversePerpetual,
-    LinearPerpetual,
-    InverseFutures,
-    LinearFutures
-}
-
-/*
-{
-        "symbol": "SUIHT",
-        "baseCoin": "SUI",
-        "quoteCoin": "HT",
-        "innovation": "0",
-        "status": "Trading",
-        "marginTrading": "none",
-        "lotSizeFilter": {
-          "basePrecision": "0.01",
-          "quotePrecision": "0.01",
-          "minOrderQty": "0.01",
-          "maxOrderQty": "5000",
-          "minOrderAmt": "0.01",
-          "maxOrderAmt": "5000"
-        },
-        "priceFilter": {
-          "tickSize": "0.01"
-        }
-      },
- */
-
-
-@Serializable
-data class TickerDTO(
+data class InstrumentsInfoResultItem(
     val symbol: String,
 //    val contractType: ContractType,
     //status: InstrumentStatusV5;
@@ -115,3 +67,18 @@ data class TickerDTO(
 //    val settleCoin: String?
 
 )
+
+
+@Serializable
+data class InstrumentsInfoListResult(
+    override val category: String,
+    override val list: List<InstrumentsInfoResultItem>,
+    override val nextPageCursor: String? = ""
+) : ListResult<InstrumentsInfoResultItem> {
+}
+
+@Serializable
+data class InstrumentsInfoResponse(
+    override val result: InstrumentsInfoListResult? = null,
+    override var nextUrl: String? = "",
+) : APIResponseV5Paginatable<InstrumentsInfoResultItem>()

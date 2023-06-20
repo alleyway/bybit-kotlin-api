@@ -2,12 +2,13 @@ package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
+import bybit.sdk.shared.OrderStatus
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 
-@SafeVarargs
+
 suspend fun ByBitOrderClient.ordersOpen(
     params: OrdersOpenParams
 ): OrdersOpenResponse =
@@ -43,7 +44,7 @@ data class OrdersOpenResultItem(
 data class OrdersOpenListResult(
     override val category: String,
     override val list: List<OrdersOpenResultItem>,
-    override val nextPageCursor: String?
+    override val nextPageCursor: String? = ""
 ) : ListResult<OrdersOpenResultItem> {
 }
 

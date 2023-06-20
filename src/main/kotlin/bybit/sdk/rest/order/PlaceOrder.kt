@@ -1,12 +1,13 @@
 package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5
+import bybit.sdk.shared.OrderType
+import bybit.sdk.shared.Side
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 
-@SafeVarargs
 suspend fun ByBitOrderClient.placeOrder(
     params: PlaceOrderParams
 ): PlaceOrderResponse =

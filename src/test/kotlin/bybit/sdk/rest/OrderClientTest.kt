@@ -2,6 +2,8 @@ package bybit.sdk.rest
 
 
 import bybit.sdk.rest.order.*
+import bybit.sdk.shared.OrderType
+import bybit.sdk.shared.Side
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

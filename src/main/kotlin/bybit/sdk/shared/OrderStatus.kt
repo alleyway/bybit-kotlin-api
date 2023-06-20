@@ -1,4 +1,4 @@
-package bybit.sdk.rest.order
+package bybit.sdk.shared
 
 import kotlinx.serialization.Serializable
 

@@ -9,15 +9,14 @@ import kotlinx.coroutines.runBlocking
 class ByBitMarketClient
 internal constructor(internal val byBitRestClient: ByBitRestClient) {
 
-    @SafeVarargs
-    fun getInstrumentsInfoBlocking(params: GetInstrumentsInfoParamsV5):
-            TickersDTO = runBlocking { getInstrumentsInfo(params) }
+    fun getInstrumentsInfoBlocking(params: InstrumentsInfoParams):
+            InstrumentsInfoResponse = runBlocking { getInstrumentsInfo(params) }
 
     /** See [getInstrumentsInfoBlocking] */
-    @SafeVarargs
+
     fun getInstrumentsInfo(
-        params: GetInstrumentsInfoParamsV5,
-        callback: ByBitRestApiCallback<TickersDTO>
+        params: InstrumentsInfoParams,
+        callback: ByBitRestApiCallback<InstrumentsInfoResponse>
     ) = coroutineToRestCallback(callback, { getInstrumentsInfo(params) })
 
 
@@ -28,12 +27,11 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
      * See section "Pagination" in the README for more details on iterators.
      */
 
-    @SafeVarargs
     fun listSupportedInstruments(
-        params: GetInstrumentsInfoParamsV5,
-    ): RequestIterator<TickerDTO> =
+        params: InstrumentsInfoParams,
+    ): RequestIterator<InstrumentsInfoResultItem> =
         RequestIterator(
             { getInstrumentsInfoBlocking(params) },
-            byBitRestClient.requestIteratorCall<TickersDTO>()
+            byBitRestClient.requestIteratorCall<InstrumentsInfoResponse>()
         )
 }

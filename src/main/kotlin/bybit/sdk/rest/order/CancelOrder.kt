@@ -6,7 +6,6 @@ import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 
-@SafeVarargs
 suspend fun ByBitOrderClient.cancelOrder(
     params: CancelOrderParams
 ): CancelOrderResponse =

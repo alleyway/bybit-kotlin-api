@@ -4,7 +4,7 @@ import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
 import bybit.sdk.properties.ByBitProperties
-import bybit.sdk.rest.contract.ByBitContractClient
+import bybit.sdk.rest.account.ByBitAccountClient
 import bybit.sdk.rest.market.ByBitMarketClient
 import bybit.sdk.rest.order.ByBitOrderClient
 import io.ktor.client.*
@@ -50,7 +50,7 @@ constructor(
         httpClientProvider
     )
 
-    val contractClient by lazy { ByBitContractClient(this) }
+    val accountClient by lazy { ByBitAccountClient(this) }
 
     val marketClient by lazy { ByBitMarketClient(this) }
 

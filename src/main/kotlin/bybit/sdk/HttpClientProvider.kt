@@ -81,7 +81,7 @@ constructor(
 
                     if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
                         if (response.status.value !== 200) {
-                            println("error: ${response.status.description}")
+                            println("HTTP error: ${response.status.toString()}")
 
                             println(response.bodyAsText())
 

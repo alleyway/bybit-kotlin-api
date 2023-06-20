@@ -1,7 +1,7 @@
 package bybit.sdk.rest
 
 
-import bybit.sdk.rest.market.GetInstrumentsInfoParamsV5
+import bybit.sdk.rest.market.InstrumentsInfoParams
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,7 +14,7 @@ internal class MarketClientTest {
     fun getInstrumentsInfo() {
 
         val resp = client.marketClient.getInstrumentsInfoBlocking(
-            GetInstrumentsInfoParamsV5(
+            InstrumentsInfoParams(
                 category = "inverse"
             )
         )
@@ -25,7 +25,7 @@ internal class MarketClientTest {
     @Test
     fun listSupportedInstruments() {
 
-        val params = GetInstrumentsInfoParamsV5(
+        val params = InstrumentsInfoParams(
             limit = 4, // apparently not allowed to pass a limit for spot
             category = "inverse"
 //			category = "linear"

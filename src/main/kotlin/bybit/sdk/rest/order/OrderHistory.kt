@@ -7,7 +7,7 @@ import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 
-@SafeVarargs
+
 suspend fun ByBitOrderClient.orderHistory(
     params: OrderHistoryParams
 ): OrderHistoryResponse =

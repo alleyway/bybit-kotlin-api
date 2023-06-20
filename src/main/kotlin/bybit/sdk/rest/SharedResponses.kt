@@ -21,7 +21,7 @@ abstract class APIResponseV5Paginatable<T>(
 
 
 @Serializable
-data class APIResponse(
+data class APIResponseV3(
 
 	@SerialName("ret_code") val retCode: Int = 0,
 	@SerialName("ret_msg") val retMsg: String = "OK",
