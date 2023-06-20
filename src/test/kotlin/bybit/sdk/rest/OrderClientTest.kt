@@ -80,14 +80,4 @@ internal class OrderClientTest {
 	}
 
 
-
-	@Test
-	fun secondTest() {
-
-		println("second test")
-
-		assertTrue(5000 > 3000)
-
-	}
-
 }
