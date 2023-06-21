@@ -10,13 +10,13 @@ class ByBitMarketClient
 internal constructor(internal val byBitRestClient: ByBitRestClient) {
 
     fun getInstrumentsInfoBlocking(params: InstrumentsInfoParams):
-            InstrumentsInfoResponse = runBlocking { getInstrumentsInfo(params) }
+            InstrumentsInfoResponse<InstrumentsInfoResultItem> = runBlocking { getInstrumentsInfo(params) }
 
     /** See [getInstrumentsInfoBlocking] */
 
     fun getInstrumentsInfo(
         params: InstrumentsInfoParams,
-        callback: ByBitRestApiCallback<InstrumentsInfoResponse>
+        callback: ByBitRestApiCallback<InstrumentsInfoResponse<InstrumentsInfoResultItem>>
     ) = coroutineToRestCallback(callback, { getInstrumentsInfo(params) })
 
 
@@ -32,6 +32,6 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
     ): RequestIterator<InstrumentsInfoResultItem> =
         RequestIterator(
             { getInstrumentsInfoBlocking(params) },
-            byBitRestClient.requestIteratorCall<InstrumentsInfoResponse>()
+            byBitRestClient.requestIteratorCall<InstrumentsInfoResponse<InstrumentsInfoResultItem>>()
         )
 }
