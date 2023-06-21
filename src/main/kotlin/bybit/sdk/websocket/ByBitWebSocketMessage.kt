@@ -1,5 +1,7 @@
 package bybit.sdk.websocket
 
+import bybit.sdk.shared.Category
+import bybit.sdk.shared.Side
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -135,6 +137,36 @@ sealed class ByBitWebSocketMessage {
 
     }
 
+
+
+    // Private
+
+
+    @Serializable
+    data class ExecutionItem(
+        val category: Category,
+        val symbol: String,
+        val side: Side,
+        val execQty: String,
+        val execPrice: String,
+        val execTime: String
+    )
+
+
+    @Serializable
+    sealed class PrivateTopicResponse : ByBitWebSocketMessage() {
+
+        val id: String? = null
+
+        val topic: String? = null
+
+        val creationTime: Long? = null
+
+        @Serializable
+        data class Execution(
+            @SerialName("data") val data: List<ExecutionItem>
+        ) : PrivateTopicResponse()
+    }
 
 }
 

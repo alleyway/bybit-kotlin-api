@@ -5,6 +5,7 @@ import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
 import bybit.sdk.ext.ByBitCompletionCallback
 import bybit.sdk.ext.coroutineToCompletionCallback
+import bybit.sdk.shared.sha256_HMAC
 import bybit.sdk.websocket.ByBitWebSocketMessage.*
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -16,6 +17,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
+import java.time.Instant
 import java.util.*
 
 private const val TOPIC_MESSAGE_KEY = "topic"
@@ -41,12 +43,13 @@ enum class ByBitEndpoint(internal vararg val pathComponents: String) {
 
 
 data class WSClientConfigurableOptions(
+    val endpoint: ByBitEndpoint,
     val key: String? = null,
     val secret: String? = null,
     val testnet: Boolean = true,
-    val pingInterval: Long = 10000
+    val pingInterval: Long = 10000,
 ) {
-    constructor(testnet: Boolean) : this(null, null, testnet) {
+    constructor(endpoint: ByBitEndpoint, testnet: Boolean) : this(endpoint, null, null, testnet) {
 
     }
 }
@@ -83,8 +86,7 @@ data class WSClientConfigurableOptions(
 class ByBitWebSocketClient
 @JvmOverloads
 constructor(
-    val endpoint: ByBitEndpoint,
-    val options: WSClientConfigurableOptions = WSClientConfigurableOptions(),
+    val options: WSClientConfigurableOptions,
     private val listener: ByBitWebSocketListener,
     private val bufferSize: Int = Channel.UNLIMITED,
     private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider(),
@@ -144,7 +146,7 @@ constructor(
 
             url.protocol = URLProtocol.WSS
             url.port = URLProtocol.WSS.defaultPort
-            url.path(*endpoint.pathComponents)
+            url.path(*options.endpoint.pathComponents)
 
             headers["User-Agent"] = Version.userAgent
         }
@@ -191,6 +193,36 @@ constructor(
      */
     suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>) {
         if (subscriptions.isEmpty()) return
+
+        if (
+            subscriptions.map { it.topic }.filterIsInstance<ByBitWebsocketTopic.PrivateTopic>().size > 0
+            && activeConnection?.isAuthenticated != true
+        ) {
+
+            val apiKey = options.key
+            val expires = Instant.now().toEpochMilli() + 10000
+
+            val toEncode = "GET/realtime$expires"
+
+
+            val signature = sha256_HMAC(toEncode, options.secret)
+
+            activeConnection
+                ?.webSocketSession
+                ?.send(
+                    """
+                    {"op": "auth",
+                        "args":["${
+                        arrayOf(
+                            apiKey,
+                            expires,
+                            signature
+                        ).joinToString(separator = "\",\"")
+                    }"]}"""
+                )
+
+            Thread.sleep(1000)
+        }
 
         activeConnection
             ?.webSocketSession
@@ -284,13 +316,16 @@ constructor(
             } else {
                 frame.jsonObject[OPERATION_MESSAGE_KEY]?.jsonPrimitive?.content
             }
+            if (topic == "execution"){
+                println("\u001b[33m" + frameType.toString() + "\u001b[0m")
+            }
 
-//            logger.debug("\u001b[33m" + frame.toString() + "\u001b[0m")
+
 
             val message = when (frameType) {
                 // TODO: different per endpoint
-                "ping", "subscribe" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
-                "tickers" -> when (endpoint) {
+                "ping", "subscribe", "auth" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
+                "tickers" -> when (options.endpoint) {
                     ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(
                         TopicResponse.TickerLinearInverse.serializer(),
                         frame
@@ -306,6 +341,7 @@ constructor(
                 "kline" -> serializer.decodeFromJsonElement(TopicResponse.Kline.serializer(), frame)
                 "liquidation" -> serializer.decodeFromJsonElement(TopicResponse.Liquidation.serializer(), frame)
                 "orderbook" -> serializer.decodeFromJsonElement(TopicResponse.Orderbook.serializer(), frame)
+                "execution" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Execution.serializer(), frame)
                 else -> RawMessage(frame.toString().toByteArray())
             }
 
@@ -331,9 +367,9 @@ constructor(
 
     @Throws(SerializationException::class)
     private fun parseStatusMessageForAuthenticationResult(message: JsonElement): Boolean {
-        if (message.isStatusMessage()) {
+        if (message.isAuthMessage()) {
             val status = serializer.decodeFromJsonElement(StatusMessage.serializer(), message)
-            if (status.retMsg == "authenticated") {
+            if (status.success == true) {
                 activeConnection?.isAuthenticated = true
                 listener.onAuthenticated(this)
                 return true
@@ -346,8 +382,8 @@ constructor(
     /**
      * If the first byte in the message is an open square bracket, this frame is housing an array
      */
-    private fun JsonElement.isStatusMessage() =
-        this is JsonObject && JsonPrimitive(TOPIC_MESSAGE_KEY).contentOrNull == "status"
+    private fun JsonElement.isAuthMessage() =
+        this is JsonObject && JsonPrimitive(OPERATION_MESSAGE_KEY).contentOrNull == "auth"
 }
 
 private class WebSocketConnection(

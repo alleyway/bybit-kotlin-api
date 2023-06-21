@@ -7,6 +7,7 @@ import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.account.ByBitAccountClient
 import bybit.sdk.rest.market.ByBitMarketClient
 import bybit.sdk.rest.order.ByBitOrderClient
+import bybit.sdk.shared.sha256_HMAC
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -16,8 +17,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
 
 
 /**
@@ -80,15 +79,7 @@ constructor(
     private inline fun <R> withHttpClient(codeBlock: (client: HttpClient) -> R) =
         httpClientProvider.buildClient().use(codeBlock)
 
-    private fun bytesToHex(hash: ByteArray): String {
-        val hexString = StringBuilder()
-        for (b in hash) {
-            val hex = Integer.toHexString(0xff and b.toInt())
-            if (hex.length == 1) hexString.append('0')
-            hexString.append(hex)
-        }
-        return hexString.toString()
-    }
+
 
 
 //    @Throws(NoSuchAlgorithmException::class, InvalidKeyException::class)
@@ -128,10 +119,7 @@ constructor(
 
             val toEncode = "${timestamp}${key}${recvWindow}${queryOrBody}"
 
-            val sha256_HMAC = Mac.getInstance("HmacSHA256")
-            val secret_key = SecretKeySpec(secret?.toByteArray(), "HmacSHA256")
-            sha256_HMAC.init(secret_key)
-            val signature =  bytesToHex(sha256_HMAC.doFinal(toEncode.toByteArray()))
+            val signature =  sha256_HMAC(toEncode, secret)
 
             headers["X-BAPI-SIGN"] = signature
             headers["X-BAPI-API-KEY"] = key

@@ -2,12 +2,17 @@ package bybit.sdk.websocket
 
 data class ByBitWebSocketSubscription(
     val topic: ByBitWebsocketTopic,
-    val symbol: String
+    val symbol: String = ""
 ) {
-    override fun toString() = if (topic.extra.isNotBlank()) {
+    override fun toString() =
+        if (topic.extra.isNotBlank()) {
         "${topic.prefix}.${topic.extra}.$symbol"
     } else {
-        "${topic.prefix}.$symbol"
+        if (symbol.isNotBlank()) {
+            "${topic.prefix}.$symbol"
+        } else {
+            topic.prefix
+        }
     }
 }
 
@@ -40,6 +45,11 @@ sealed class ByBitWebsocketTopic(val prefix: String, val extra: String = "") {
         object Daily : Kline("D")
         object Weekly : Kline("W")
         object Monthly : Kline("M")
+    }
+
+
+    sealed class PrivateTopic(prefix: String) : ByBitWebsocketTopic(prefix) {
+        object Execution : PrivateTopic("execution")
     }
 
     object Liquidations : ByBitWebsocketTopic("liquidation")

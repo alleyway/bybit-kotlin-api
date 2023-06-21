@@ -57,10 +57,9 @@ suspend fun main() {
 
 suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
 
-    val options = WSClientConfigurableOptions(bybitKey,bybitSecret,true)
+    val options = WSClientConfigurableOptions(ByBitEndpoint.Spot, bybitKey, bybitSecret, true)
 
     val websocketClient = ByBitWebSocketClient(
-        ByBitEndpoint.Inverse,
         options,
         object : ByBitWebSocketListener {
             override fun onAuthenticated(client: ByBitWebSocketClient) {

@@ -53,10 +53,9 @@ public class JavaUsageSample {
     public static void websocketSample(String bybitKey, String bybitSecret) {
 
         WSClientConfigurableOptions options =
-                new WSClientConfigurableOptions(true);
+                new WSClientConfigurableOptions(ByBitEndpoint.Spot,true);
 
         ByBitWebSocketClient client = new ByBitWebSocketClient(
-                ByBitEndpoint.Spot,
                 options,
                 new DefaultByBitWebSocketListener() {
                     @Override
