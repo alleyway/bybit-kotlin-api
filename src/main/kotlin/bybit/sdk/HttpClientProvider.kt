@@ -68,8 +68,14 @@ constructor(
 
     override fun buildClient() =
         HttpClient(buildEngine()) {
-            install(WebSockets)
-            install(HttpTimeout)
+            install(WebSockets) {
+                pingInterval = 5_000
+            }
+            install(HttpTimeout) {
+                connectTimeoutMillis = 5000
+                socketTimeoutMillis= 5000
+
+            }
             install(ContentNegotiation) {
                 json(Json {
                     isLenient = true
