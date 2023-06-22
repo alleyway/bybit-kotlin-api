@@ -44,6 +44,17 @@ data class InstrumentsInfoParams(
 )
 
 
+@Serializable
+data class LotSizeFilter(
+    val basePrecision: String,
+    val quotePrecision: String,
+    val minOrderQty: String,
+    val maxOrderQty: String,
+    val minOrderAmt: String,
+    val maxOrderAmt: String
+)
+
+
 @Serializable(with = InstrumentsInfoResultItemSerializer::class)
 sealed class InstrumentsInfoResultItem {
     open val symbol: String = ""
@@ -78,6 +89,7 @@ sealed class InstrumentsInfoResultItem {
         val baseCoin: String = "",
         val quoteCoin: String = "",
         val status: String = "",
+        val lotSizeFilter: LotSizeFilter,
 
         val marginTrading: String,
     ) : InstrumentsInfoResultItem()
@@ -86,15 +98,12 @@ sealed class InstrumentsInfoResultItem {
 }
 
 
-
 @Serializable
 data class InstrumentsInfoListResult<T : InstrumentsInfoResultItem>(
     override val category: Category,
     override val list: List<T>,
     override val nextPageCursor: String? = ""
 ) : ListResult<InstrumentsInfoResultItem>
-
-
 
 
 object InstrumentsInfoResultItemSerializer :
