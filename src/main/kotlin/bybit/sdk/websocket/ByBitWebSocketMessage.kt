@@ -1,6 +1,8 @@
 package bybit.sdk.websocket
 
 import bybit.sdk.shared.Category
+import bybit.sdk.shared.OrderStatus
+import bybit.sdk.shared.OrderType
 import bybit.sdk.shared.Side
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -138,7 +140,6 @@ sealed class ByBitWebSocketMessage {
     }
 
 
-
     // Private
 
 
@@ -152,6 +153,50 @@ sealed class ByBitWebSocketMessage {
         val execTime: String
     )
 
+    @Serializable
+    data class OrderItem(
+        val category: Category,
+        val symbol: String,
+        val orderId: String,
+        val side: Side,
+        val orderType: OrderType,
+        val cancelType: String,
+        val price: String,
+        val qty: String,
+        val orderIv: String,
+        val timeInForce: String,
+        val orderStatus: OrderStatus,
+        val orderLinkId: String,
+        val lastPriceOnCreated: String,
+        val reduceOnly: Boolean,
+        val leavesQty: String,
+        val leavesValue: String,
+        val cumExecQty: String,
+        val cumExecValue: String,
+        val avgPrice: String,
+        val blockTradeId: String,
+        val positionIdx: Int,
+        val cumExecFee: String,
+        val createdTime: String,
+        val updatedTime: String,
+        val rejectReason: String,
+        val stopOrderType: String,
+        val tpslMode: String = "",
+        val triggerPrice: String,
+        val takeProfit: String,
+        val stopLoss: String,
+        val tpTriggerBy: String,
+        val slTriggerBy: String,
+        val tpLimitPrice: String = "",
+        val slLimitPrice: String = "",
+        val triggerDirection: Int,
+        val triggerBy: String,
+        val closeOnTrigger: Boolean,
+        val placeType: String = "",
+        val smpType: String,
+        val smpGroup: Int,
+        val smpOrderId: String
+    )
 
     @Serializable
     sealed class PrivateTopicResponse : ByBitWebSocketMessage() {
@@ -164,7 +209,12 @@ sealed class ByBitWebSocketMessage {
 
         @Serializable
         data class Execution(
-            @SerialName("data") val data: List<ExecutionItem>
+            val data: List<ExecutionItem>
+        ) : PrivateTopicResponse()
+
+        @Serializable
+        data class Order(
+            val data: List<OrderItem>
         ) : PrivateTopicResponse()
     }
 

@@ -323,7 +323,6 @@ constructor(
 
 
             val message = when (frameType) {
-                // TODO: different per endpoint
                 "ping", "subscribe", "auth" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
                 "tickers" -> when (options.endpoint) {
                     ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(
@@ -342,6 +341,7 @@ constructor(
                 "liquidation" -> serializer.decodeFromJsonElement(TopicResponse.Liquidation.serializer(), frame)
                 "orderbook" -> serializer.decodeFromJsonElement(TopicResponse.Orderbook.serializer(), frame)
                 "execution" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Execution.serializer(), frame)
+                "order" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Order.serializer(), frame)
                 else -> RawMessage(frame.toString().toByteArray())
             }
 
