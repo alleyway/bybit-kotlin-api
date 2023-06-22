@@ -71,7 +71,7 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
                 message: ByBitWebSocketMessage
             ) {
                 when (message) {
-                    is ByBitWebSocketMessage.RawMessage -> println(String(message.data))
+                    is ByBitWebSocketMessage.RawMessage -> println(message.data)
                     else -> println("Received Message: $message")
                 }
             }
