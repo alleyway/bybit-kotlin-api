@@ -44,7 +44,7 @@ data class InstrumentsInfoParams(
 )
 
 
-@Serializable(with = MyCustomSerializer::class)
+@Serializable(with = InstrumentsInfoResultItemSerializer::class)
 sealed class InstrumentsInfoResultItem {
     open val symbol: String = ""
 
@@ -97,7 +97,7 @@ data class InstrumentsInfoListResult<T : InstrumentsInfoResultItem>(
 
 
 
-object MyCustomSerializer :
+object InstrumentsInfoResultItemSerializer :
     JsonContentPolymorphicSerializer<InstrumentsInfoResultItem>(InstrumentsInfoResultItem::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<InstrumentsInfoResultItem> = when {
         "contractType" in element.jsonObject -> InstrumentsInfoResultItem.InstrumentsInfoResultItemLinearInverse.serializer()

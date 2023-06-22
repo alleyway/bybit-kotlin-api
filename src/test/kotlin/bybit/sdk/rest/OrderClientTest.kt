@@ -1,10 +1,7 @@
 package bybit.sdk.rest
 
 
-import bybit.sdk.rest.order.CancelOrderParams
-import bybit.sdk.rest.order.OrderHistoryParams
-import bybit.sdk.rest.order.OrdersOpenParams
-import bybit.sdk.rest.order.PlaceOrderParams
+import bybit.sdk.rest.order.*
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.OrderType
 import bybit.sdk.shared.Side
@@ -77,6 +74,22 @@ internal class OrderClientTest {
 		)
 		val items = resp.asSequence().toList()
 		assertTrue(items.size > 0)
+	}
+
+
+	@Test
+	fun cancelAllOrdersTest() {
+		val spotResponse = client.orderClient.cancelAllOrdersBlocking(
+			CancelAllOrdersParams(Category.spot)
+		)
+		assertTrue(spotResponse.retCode == 0)
+		assertTrue(spotResponse is CancelAllOrdersResponse.CancelAllOrdersResponseSpot)
+
+		val linearResponse = client.orderClient.cancelAllOrdersBlocking(
+			CancelAllOrdersParams(Category.linear, settleCoin = "USDT")
+		)
+		assertTrue(linearResponse.retCode == 0)
+		assertTrue(linearResponse is CancelAllOrdersResponse.CancelAllOrdersResponseOther)
 	}
 
 

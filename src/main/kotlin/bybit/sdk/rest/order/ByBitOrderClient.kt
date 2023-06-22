@@ -23,10 +23,20 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
             CancelOrderResponse = runBlocking { cancelOrder(params) }
 
     /** See [placeOrderBlocking] */
+    fun cancelAllOrders(
+        params: CancelAllOrdersParams,
+        callback: ByBitRestApiCallback<CancelAllOrdersResponse>
+    ) = coroutineToRestCallback(callback, { cancelAllOrders(params) })
+
+    fun cancelAllOrdersBlocking(params: CancelAllOrdersParams):
+            CancelAllOrdersResponse = runBlocking { cancelAllOrders(params) }
+
+    /** See [placeOrderBlocking] */
     fun cancelOrder(
         params: CancelOrderParams,
         callback: ByBitRestApiCallback<CancelOrderResponse>
     ) = coroutineToRestCallback(callback, { cancelOrder(params) })
+
 
 
     fun orderHistoryBlocking(params: OrderHistoryParams):
