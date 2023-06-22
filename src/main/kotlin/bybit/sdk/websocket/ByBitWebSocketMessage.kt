@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 
 sealed class ByBitWebSocketMessage {
 
-    data class RawMessage(val data: ByteArray) : ByBitWebSocketMessage()
+    data class RawMessage(val data: String) : ByBitWebSocketMessage()
 
     @Serializable
     data class StatusMessage(

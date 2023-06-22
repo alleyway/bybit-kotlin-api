@@ -286,13 +286,13 @@ constructor(
             }
 
             if (sendRaw) {
-                listener.onReceive(this, RawMessage(frame.readBytes()))
+                listener.onReceive(this, RawMessage(frame.toString()))
             } else {
                 val json = serializer.parseToJsonElement(String(frame.readBytes()))
                 processFrameJson(json).forEach { listener.onReceive(this, it) }
             }
         } catch (ex: Exception) {
-            listener.onReceive(this, RawMessage(frame.readBytes()))
+            listener.onReceive(this, RawMessage(frame.toString()))
             listener.onError(this, ex)
         }
     }
@@ -331,7 +331,7 @@ constructor(
                     )
                     ByBitEndpoint.Spot -> serializer.decodeFromJsonElement(TopicResponse.TickerSpot.serializer(), frame)
                     else -> {
-                        RawMessage(frame.toString().toByteArray())
+                        RawMessage(frame.toString())
                     }
                 }
 
@@ -342,7 +342,7 @@ constructor(
                 "orderbook" -> serializer.decodeFromJsonElement(TopicResponse.Orderbook.serializer(), frame)
                 "execution" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Execution.serializer(), frame)
                 "order" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Order.serializer(), frame)
-                else -> RawMessage(frame.toString().toByteArray())
+                else -> RawMessage(frame.toString())
             }
 
             collector.add(message)
