@@ -342,6 +342,7 @@ constructor(
                 "orderbook" -> serializer.decodeFromJsonElement(TopicResponse.Orderbook.serializer(), frame)
                 "execution" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Execution.serializer(), frame)
                 "order" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Order.serializer(), frame)
+                "wallet" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Wallet.serializer(), frame)
                 else -> RawMessage(frame.toString())
             }
 

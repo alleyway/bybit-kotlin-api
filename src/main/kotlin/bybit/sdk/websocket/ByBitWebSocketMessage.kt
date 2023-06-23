@@ -1,9 +1,6 @@
 package bybit.sdk.websocket
 
-import bybit.sdk.shared.Category
-import bybit.sdk.shared.OrderStatus
-import bybit.sdk.shared.OrderType
-import bybit.sdk.shared.Side
+import bybit.sdk.shared.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -153,6 +150,39 @@ sealed class ByBitWebSocketMessage {
         val execTime: String
     )
 
+
+    @Serializable
+    data class CoinItem(
+        val coin: String,
+        val equity: String,
+        val usdValue: String,
+        val walletBalance: String,
+        val availableToWithdraw: String,
+        val availableToBorrow: String,
+        val borrowAmount: String,
+        val accruedInterest: String,
+        val totalOrderIM: String,
+        val totalPositionIM: String,
+        val totalPositionMM: String,
+        val unrealisedPnl: String,
+        val cumRealisedPnl: String
+    )
+
+    @Serializable
+    data class WalletItem(
+        val accountIMRate: String,
+        val accountMMRate: String,
+        val totalEquity: String,
+        val totalWalletBalance: String,
+        val totalMarginBalance: String,
+        val totalAvailableBalance: String,
+        val totalPerpUPL: String,
+        val totalInitialMargin: String,
+        val accountType: AccountType,
+        val accountLTV: String,
+        val coin: List<CoinItem>
+    )
+
     @Serializable
     data class OrderItem(
         val category: Category,
@@ -215,6 +245,11 @@ sealed class ByBitWebSocketMessage {
         @Serializable
         data class Order(
             val data: List<OrderItem>
+        ) : PrivateTopicResponse()
+
+        @Serializable
+        data class Wallet(
+            val data: List<WalletItem>
         ) : PrivateTopicResponse()
     }
 
