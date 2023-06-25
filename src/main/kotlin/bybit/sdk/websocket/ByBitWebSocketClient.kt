@@ -317,7 +317,7 @@ constructor(
                 frame.jsonObject[OPERATION_MESSAGE_KEY]?.jsonPrimitive?.content
             }
             if (topic == "execution"){
-                println("\u001b[33m" + frameType.toString() + "\u001b[0m")
+                println("\u001b[35m " + frameType.toString() + " \u001b[0m")
             }
 
 
