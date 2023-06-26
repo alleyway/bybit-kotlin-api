@@ -1,6 +1,6 @@
 import org.gradle.internal.impldep.org.apache.maven.model.License
 
-project.version = "0.2-SNAPSHOT"
+project.version = "0.2"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
