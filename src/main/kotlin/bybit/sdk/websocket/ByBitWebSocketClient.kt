@@ -316,19 +316,23 @@ constructor(
             } else {
                 frame.jsonObject[OPERATION_MESSAGE_KEY]?.jsonPrimitive?.content
             }
-            if (topic == "execution"){
-                println("\u001b[35m " + frameType.toString() + " \u001b[0m")
-            }
-
+//            if (topic == "execution"){
+//                println("\u001b[35m " + frameType.toString() + " \u001b[0m")
+//            }
 
 
             val message = when (frameType) {
-                "ping", "subscribe", "auth" -> serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
+                "pong", "ping", "subscribe", "auth" -> serializer.decodeFromJsonElement(
+                    StatusMessage.serializer(),
+                    frame
+                )
+
                 "tickers" -> when (options.endpoint) {
                     ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(
                         TopicResponse.TickerLinearInverse.serializer(),
                         frame
                     )
+
                     ByBitEndpoint.Spot -> serializer.decodeFromJsonElement(TopicResponse.TickerSpot.serializer(), frame)
                     else -> {
                         RawMessage(frame.toString())

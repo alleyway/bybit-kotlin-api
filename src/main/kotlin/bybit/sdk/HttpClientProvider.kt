@@ -86,7 +86,7 @@ constructor(
                 validateResponse { response ->
 
                     if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
-                        if (response.status.value !== 200) {
+                        if (response.status.value != 200) {
                             println("HTTP error: ${response.status.toString()}")
 
                             println(response.bodyAsText())
