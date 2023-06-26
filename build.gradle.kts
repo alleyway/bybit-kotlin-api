@@ -1,6 +1,4 @@
-import org.gradle.internal.impldep.org.apache.maven.model.License
-
-project.version = "0.2"
+project.version = "0.3-SNAPSHOT"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
@@ -110,7 +108,7 @@ tasks {
     }
 }
 
-tasks.register("androidReleaseSourcesJar", Jar::class) {
+tasks.register("jvmReleaseSourcesJar", Jar::class) {
     archiveClassifier.set("sources")
     from(kotlin.sourceSets["main"].kotlin.srcDirs)
 }
@@ -127,7 +125,7 @@ publishing {
             version = project.version.toString()
             //artifact(sourcesJar)
             from(components["java"])
-            artifact(tasks.getByName("androidReleaseSourcesJar"))
+            artifact(tasks.getByName("jvmReleaseSourcesJar"))
 
             pom {
                 name.set(provider {
@@ -144,9 +142,8 @@ publishing {
                 }
                 licenses {
                     license {
-                        val license: License by rootProject.extra
-                        name.set(license.name)
-                        url.set(license.url.toString())
+                        name.set("The Apache License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
                 developers {
