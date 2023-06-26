@@ -1,4 +1,4 @@
-project.version = "0.1"
+project.version = "0.2-SNAPSHOT"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
