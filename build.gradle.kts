@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.apache.maven.model.License
+
 project.version = "0.2-SNAPSHOT"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
@@ -131,19 +133,22 @@ publishing {
                 name.set(provider {
                     project.description ?: "${project.group}:${project.name}"
                 })
+                description.set(provider {
+                    project.description
+                })
                 url.set("https://junit.org/junit5/")
                 scm {
                     connection.set("scm:git:git://github.com/alleyway/bybit-kotlin-api.git")
                     developerConnection.set("scm:git:git://github.com/alleyway/bybit-kotlin-api.git")
                     url.set("https://github.com/alleyway/bybit-kotlin-api")
                 }
-//                licenses {
-//                    license {
-//                        val license: License by rootProject.extra
-//                        name.set(license.name)
-//                        url.set(license.url.toString())
-//                    }
-//                }
+                licenses {
+                    license {
+                        val license: License by rootProject.extra
+                        name.set(license.name)
+                        url.set(license.url.toString())
+                    }
+                }
                 developers {
                     developer {
                         id.set("mlake900")
