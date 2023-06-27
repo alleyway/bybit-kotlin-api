@@ -192,5 +192,8 @@ publishing {
 
 val signingTasks = tasks.withType<Sign>()
 
-tasks.withType<AbstractPublishToMaven>().configureEach { dependsOn(signingTasks) }
+if (!isSnapshot){
+    tasks.withType<AbstractPublishToMaven>().configureEach { dependsOn(signingTasks) }
+}
+
 
