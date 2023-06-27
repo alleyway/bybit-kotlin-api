@@ -1,4 +1,4 @@
-project.version = "0.4.1"
+project.version = "0.4.2-SNAPSHOT"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
@@ -128,7 +128,7 @@ val isSnapshot = project.version.toString().contains("SNAPSHOT")
 signing {
     useGpgCmd()
     sign(publishing.publications)
-//    isRequired = !(signingKey.isNullOrBlank() || signingPwd.isNullOrBlank())
+    isRequired = !isSnapshot
 }
 
 publishing {
