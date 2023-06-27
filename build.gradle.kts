@@ -1,4 +1,4 @@
-project.version = "0.3"
+project.version = "0.4.1"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
@@ -70,6 +70,10 @@ allprojects {
 //    from(java["main"].allSource)
 //}
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 tasks {
 
@@ -77,7 +81,6 @@ tasks {
         processResources {
             exclude("bybit.properties")
         }
-
     }
 
     test {
@@ -108,10 +111,16 @@ tasks {
     }
 }
 
-tasks.register("jvmReleaseSourcesJar", Jar::class) {
-    archiveClassifier.set("sources")
-    from(kotlin.sourceSets["main"].kotlin.srcDirs)
-}
+//tasks.register("jvmReleaseSourcesJar", Jar::class) {
+//    archiveClassifier.set("sources")
+//    from(kotlin.sourceSets["main"].kotlin.srcDirs)
+//}
+
+//tasks.register<Jar>("javadocJar") {
+//    archiveClassifier.set("javadoc")
+//    from(tasks.named("javadoc"))
+//}
+
 
 val isSnapshot = project.version.toString().contains("SNAPSHOT")
 
@@ -125,7 +134,8 @@ publishing {
             version = project.version.toString()
             //artifact(sourcesJar)
             from(components["java"])
-            artifact(tasks.getByName("jvmReleaseSourcesJar"))
+//            artifact(tasks.getByName("jvmReleaseSourcesJar"))
+//            artifact(tasks["javadocJar"])
 
             pom {
                 name.set(provider {
