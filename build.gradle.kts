@@ -1,4 +1,4 @@
-project.version = "0.4.2-SNAPSHOT"
+project.version = "0.4.3-SNAPSHOT"
 project.description = "ByBit API for Java/Kotlin"
 buildscript {
     repositories {
@@ -125,10 +125,12 @@ tasks {
 val isSnapshot = project.version.toString().contains("SNAPSHOT")
 
 
-signing {
-    useGpgCmd()
-    sign(publishing.publications)
-    isRequired = !isSnapshot
+if (!isSnapshot) {
+    signing {
+        useGpgCmd()
+        sign(publishing.publications)
+
+    }
 }
 
 publishing {
@@ -192,7 +194,7 @@ publishing {
 
 val signingTasks = tasks.withType<Sign>()
 
-if (!isSnapshot){
+if (!isSnapshot) {
     tasks.withType<AbstractPublishToMaven>().configureEach { dependsOn(signingTasks) }
 }
 
