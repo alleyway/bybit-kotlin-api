@@ -50,3 +50,10 @@ Remember to use the escape ("\") for special charactors of the password in the g
 ```bash
 ./gradlew build sign publish --exclude-task test -i -PsonatypeUsername= -PsonatypePassword=
 ```
+
+### Release non-snapshot
+ - update readme versions
+ - commit non-snapshot version
+ - create tag of version
+ - run gradlew build sign publish locally
+
