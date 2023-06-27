@@ -125,6 +125,12 @@ tasks {
 val isSnapshot = project.version.toString().contains("SNAPSHOT")
 
 
+signing {
+    useGpgCmd()
+    sign(publishing.publications)
+//    isRequired = !(signingKey.isNullOrBlank() || signingPwd.isNullOrBlank())
+}
+
 publishing {
     publications {
 
@@ -183,4 +189,8 @@ publishing {
     }
 
 }
+
+val signingTasks = tasks.withType<Sign>()
+
+tasks.withType<AbstractPublishToMaven>().configureEach { dependsOn(signingTasks) }
 
