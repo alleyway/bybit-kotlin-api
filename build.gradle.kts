@@ -6,8 +6,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.22")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.0")
     }
 }
 
@@ -15,9 +15,9 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    kotlin("jvm") version "1.8.22"
-    kotlin("plugin.serialization") version "1.8.22"
-    kotlin("kapt") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("kapt") version "1.9.0"
 }
 
 //tasks.withType<KaptGenerateStubs> {
@@ -33,9 +33,9 @@ plugins {
 dependencies {
 
     implementation("ch.qos.logback:logback-classic:1.2.9")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
 
-    val ktorVersion = "2.3.1"
+    val ktorVersion = "2.3.2"
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-websockets-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp-jvm:$ktorVersion")

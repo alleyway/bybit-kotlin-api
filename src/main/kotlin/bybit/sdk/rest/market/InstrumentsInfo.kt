@@ -45,13 +45,20 @@ data class InstrumentsInfoParams(
 
 
 @Serializable
-data class LotSizeFilter(
+data class LotSizeFilterSpot(
     val basePrecision: String,
     val quotePrecision: String,
     val minOrderQty: String,
     val maxOrderQty: String,
     val minOrderAmt: String,
     val maxOrderAmt: String
+)
+
+@Serializable
+data class LotSizeFilterShared(
+    val maxOrderQty: String,
+    val minOrderQty: String,
+    val qtyStep: String
 )
 
 
@@ -66,7 +73,7 @@ sealed class InstrumentsInfoResultItem {
         val baseCoin: String = "",
         val quoteCoin: String = "",
         val status: String = "",
-
+        val lotSizeFilter: LotSizeFilterShared,
         val contractType: ContractType,
         val fundingInterval: Int,
     ) : InstrumentsInfoResultItem()
@@ -78,7 +85,7 @@ sealed class InstrumentsInfoResultItem {
         val baseCoin: String = "",
         val quoteCoin: String = "",
         val status: String = "",
-
+        val lotSizeFilter: LotSizeFilterShared,
         val optionsType: String
     ) : InstrumentsInfoResultItem()
 
@@ -89,7 +96,7 @@ sealed class InstrumentsInfoResultItem {
         val baseCoin: String = "",
         val quoteCoin: String = "",
         val status: String = "",
-        val lotSizeFilter: LotSizeFilter,
+        val lotSizeFilter: LotSizeFilterSpot,
 
         val marginTrading: String,
     ) : InstrumentsInfoResultItem()

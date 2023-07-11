@@ -7,6 +7,7 @@ import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.account.ByBitAccountClient
 import bybit.sdk.rest.market.ByBitMarketClient
 import bybit.sdk.rest.order.ByBitOrderClient
+import bybit.sdk.rest.position.ByBitPositionClient
 import bybit.sdk.shared.sha256_HMAC
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -54,6 +55,8 @@ constructor(
     val marketClient by lazy { ByBitMarketClient(this) }
 
     val orderClient by lazy { ByBitOrderClient(this) }
+
+    val positionClient by lazy { ByBitPositionClient(this) }
 
     private var bybitApiDomain: String
 
