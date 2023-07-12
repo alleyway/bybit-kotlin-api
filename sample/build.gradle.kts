@@ -5,7 +5,7 @@ plugins {
 dependencies {
     implementation(project(":"))
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
     // For custom interceptors on defaultOkHttpClientProvider

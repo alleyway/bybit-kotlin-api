@@ -32,7 +32,7 @@ plugins {
 
 dependencies {
 
-    implementation("ch.qos.logback:logback-classic:1.4.7")
+    implementation("org.slf4j:slf4j-simple:2.0.7")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
 
     val ktorVersion = "2.3.2"
@@ -47,7 +47,7 @@ dependencies {
     implementation("com.thinkinglogic.builder:kotlin-builder-annotation:$ktBuilderVersion")
     kapt("com.thinkinglogic.builder:kotlin-builder-processor:$ktBuilderVersion")
 
-    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
     testImplementation(kotlin("test-junit5"))
 }
 
