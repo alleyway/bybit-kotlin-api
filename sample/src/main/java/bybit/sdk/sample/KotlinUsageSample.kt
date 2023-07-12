@@ -20,7 +20,7 @@ suspend fun main() {
 
     val bybitClient = ByBitRestClient(bybitKey, bybitSecret, true,  httpClientProvider = okHttpClientProvider)
 
-    println("Blocking for server time...")
+    println("Blocking for wallet balance...")
     val walletBalanceResponse = bybitClient.accountClient.getWalletBalanceBlocking(WalletBalanceParams(AccountType.SPOT, listOf("BTC")))
 
     println("Got wallet balance synchronously: $walletBalanceResponse")
