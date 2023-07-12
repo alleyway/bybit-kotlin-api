@@ -31,4 +31,15 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
     ) = coroutineToRestCallback(callback, { setLeverage(params) })
 
 
+    fun switchIsolatedBlocking(params: SwitchIsolatedParams):
+            APIResponseV5 = runBlocking { switchIsolated(params) }
+
+    /** See [switchIsolatedBlocking] */
+
+    fun switchIsolated(
+        params: SwitchIsolatedParams,
+        callback: ByBitRestApiCallback<APIResponseV5>
+    ) = coroutineToRestCallback(callback, { switchIsolated(params) })
+
+
 }
