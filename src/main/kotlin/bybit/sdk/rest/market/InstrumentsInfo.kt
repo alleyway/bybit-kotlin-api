@@ -65,14 +65,18 @@ data class LotSizeFilterShared(
 @Serializable(with = InstrumentsInfoResultItemSerializer::class)
 sealed class InstrumentsInfoResultItem {
     open val symbol: String = ""
+    open val baseCoin: String = ""
+    open val quoteCoin: String = ""
+    open val status: String = ""
+
 
 
     @Serializable
     data class InstrumentsInfoResultItemLinearInverse(
         override val symbol: String = "",
-        val baseCoin: String = "",
-        val quoteCoin: String = "",
-        val status: String = "",
+        override val baseCoin: String = "",
+        override val quoteCoin: String = "",
+        override val status: String = "",
         val lotSizeFilter: LotSizeFilterShared,
         val contractType: ContractType,
         val fundingInterval: Int,
@@ -82,9 +86,9 @@ sealed class InstrumentsInfoResultItem {
     @Serializable
     data class InstrumentsInfoResultItemOption(
         override val symbol: String = "",
-        val baseCoin: String = "",
-        val quoteCoin: String = "",
-        val status: String = "",
+        override val baseCoin: String = "",
+        override val quoteCoin: String = "",
+        override val status: String = "",
         val lotSizeFilter: LotSizeFilterShared,
         val optionsType: String
     ) : InstrumentsInfoResultItem()
@@ -93,9 +97,9 @@ sealed class InstrumentsInfoResultItem {
     @Serializable
     data class InstrumentsInfoResultItemSpot(
         override val symbol: String = "",
-        val baseCoin: String = "",
-        val quoteCoin: String = "",
-        val status: String = "",
+        override val baseCoin: String = "",
+        override val quoteCoin: String = "",
+        override val status: String = "",
         val lotSizeFilter: LotSizeFilterSpot,
 
         val marginTrading: String,

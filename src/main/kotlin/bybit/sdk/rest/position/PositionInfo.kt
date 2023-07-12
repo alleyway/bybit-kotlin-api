@@ -17,13 +17,15 @@ suspend fun ByBitPositionClient.getPositionInfo(
             "list",
         )
         params.category.let { parameters["category"] = it.toString() }
-        params.symbol?.let { parameters["symbol"] = it.toString() }
+        params.symbol?.let { parameters["symbol"] = it }
+        params.settleCoin?.let { parameters["settleCoin"] = it }
     }, HttpMethod.Get, false)
 
 @Builder
 data class PositionInfoParams(
     val category: Category,
     val symbol: String? = null,
+    val settleCoin: String? = null,
 )
 
 @Serializable
@@ -34,6 +36,11 @@ data class PositionInfoListResultItem(
     val avgPrice: String,
     val positionValue: String,
     val tradeMode: Int,
+
+    val markPrice: String,
+
+    val createdTime: String,
+    val updatedTime: String,
 )
 
 @Serializable
