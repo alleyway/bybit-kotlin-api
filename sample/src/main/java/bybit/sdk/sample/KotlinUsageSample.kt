@@ -1,5 +1,9 @@
 package bybit.sdk.sample
 
+import bybit.sdk.rest.ByBitRestClient
+import bybit.sdk.rest.account.WalletBalanceParams
+import bybit.sdk.rest.okHttpClientProvider
+import bybit.sdk.shared.AccountType
 import bybit.sdk.websocket.*
 import kotlinx.coroutines.delay
 import kotlin.system.exitProcess
@@ -10,45 +14,18 @@ suspend fun main() {
     val bybitSecret = System.getenv("BYBIT_SECRET")
 
     if (bybitKey.isNullOrEmpty() || bybitSecret.isNullOrEmpty()) {
-        println("Make sure you set your BYBIT_API_KEY andBYBIT_SECRET environment variable!")
+        println("Make sure you set your BYBIT_API_KEY and BYBIT_SECRET environment variables!")
         exitProcess(1)
     }
 
-//    val bybitClient = ByBitRestClient(bybitKey, bybitSecret,  httpClientProvider = okHttpClientProvider)
-//
-//    println("Blocking for server time...")
-//    val serverTimeResponse = bybitClient.contractClient.getServerTimeBlocking()
-//    println("Got server time synchronously: $serverTimeResponse")
+    val bybitClient = ByBitRestClient(bybitKey, bybitSecret, true,  httpClientProvider = okHttpClientProvider)
 
-//    println("Getting server time asynchronously...")
-//    val deferred = GlobalScope.async {
-//        val asyncTime = bybitClient.contractClient.getServerTime()
-//        println("Got server time asynchronously: $asyncTime")
-//    }
+    println("Blocking for server time...")
+    val walletBalanceResponse = bybitClient.accountClient.getWalletBalanceBlocking(WalletBalanceParams(AccountType.SPOT, listOf("BTC")))
 
-    // deferred.await()
-//    println("Done getting time asynchronously!")
-//
-//    println("Using options")
-//    val groupedDaily = bybitClient.getGroupedDailyAggregates(
-//        GroupedDailyParameters("us", "stocks", "2022-12-08"),
-//        ByBitRestOptions.withTimeout(10_000), // Custom timeout for this request
-//        ByBitRestOptions.withQueryParam("additional-param", "additional-value"), // Additional query parameter
-//        ByBitRestOptions.withHeader("X-Custom-Header", "custom-value"), // Custom header for this request
-//        { this.expectSuccess = true }, // Example of an arbitrary option that doesn't use a helper function
-//    )
-//
-//    println("Got ${groupedDaily.results.size} results from grouped daily")
-//
-//    iteratorExample(bybitClient)
-//    tradesIteratorExample(bybitClient)
-//    quotesIteratorExample(bybitClient)
-//
-//    financialsSample(bybitClient)
-//
-//    indicesSample(bybitClient)
-//
-//    println("\n\nWebsocket sample:")
+    println("Got wallet balance synchronously: $walletBalanceResponse")
+
+    println("\n\nWebsocket sample:")
     websocketSample(bybitKey, bybitSecret)
 
     exitProcess(0)
