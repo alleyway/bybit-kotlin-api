@@ -36,8 +36,7 @@ Look in the *sample* project for examples in Java or Kotlin.
 
 Here's a little example to get you started... 
 
-https://github.com/alleyway/bybit-kotlin-api/blob/3f61bcce303a8741ebe0547ade39366091b10676/sample/src/main/java/bybit/sdk/sample/KotlinUsageSample.kt#L21-L27
-
+https://github.com/alleyway/bybit-kotlin-api/blob/70d4b83dc8d1015a7fab04d0f1cc27bb0dcc34f3/sample/src/main/java/bybit/sdk/sample/KotlinUsageSample.kt#L21-L26
 
 ## Developer's Notes
 
