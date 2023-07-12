@@ -32,6 +32,12 @@ To use the SDK in a Maven project:
 Look in the *sample* project for examples in Java or Kotlin.
 
 
+## Example code
+
+
+https://github.com/alleyway/bybit-kotlin-api/blob/d31236d99d8ecc1dd62f3568fb6e43dd1ba5bdf6/sample/src/main/java/bybit/sdk/sample/KotlinUsageSample.kt#L20C1-L26
+
+
 ## Developer's Notes
 
 ### Deployment
