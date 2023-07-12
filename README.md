@@ -1,4 +1,4 @@
-# ByBit JVM Client SDK written in Kotlin
+# ByBit Java API Client SDK (written in Kotlin)
 
 NOTE: this library is in early development stages. There is NO WARRANTY.
 
@@ -34,6 +34,7 @@ Look in the *sample* project for examples in Java or Kotlin.
 
 ## Example code
 
+Here's a little example to get you started... 
 
 https://github.com/alleyway/bybit-kotlin-api/blob/d31236d99d8ecc1dd62f3568fb6e43dd1ba5bdf6/sample/src/main/java/bybit/sdk/sample/KotlinUsageSample.kt#L20C1-L26
 
