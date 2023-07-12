@@ -32,7 +32,7 @@ plugins {
 
 dependencies {
 
-    implementation("ch.qos.logback:logback-classic:1.2.9")
+    implementation("ch.qos.logback:logback-classic:1.4.7")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
 
     val ktorVersion = "2.3.2"
@@ -110,6 +110,14 @@ tasks {
         add("archives", jar)
     }
 }
+
+
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask>()
+    .configureEach {
+        listOf("util", "file", "main", "jvm", "processing", "comp", "tree", "api", "parser", "code")
+            .flatMap { listOf("--add-opens", "jdk.compiler/com.sun.tools.javac.$it=ALL-UNNAMED") }
+            .forEach(kaptProcessJvmArgs::addAll)
+    }
 
 //tasks.register("jvmReleaseSourcesJar", Jar::class) {
 //    archiveClassifier.set("sources")
