@@ -145,12 +145,14 @@ sealed class ByBitWebSocketMessage {
         val category: Category,
         val symbol: String,
         val side: Side,
+        val execType: ExecType?,
         val execValue: String?,
         val execQty: String,
         val execPrice: String,
         val execTime: String,
         val isMaker: Boolean,
-        val feeRate: String
+        val feeRate: String,
+        val closedSize: String
     )
 
 
