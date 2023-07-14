@@ -12,7 +12,7 @@ To use the SDK in a Gradle project:
 ```groovy
 
 dependencies {
-    implementation 'io.github.alleyway:bybit-kotlin-api:0.4.3' 
+    implementation 'io.github.alleyway:bybit-kotlin-api:0.4.4' 
 }
 
 ```
@@ -23,7 +23,7 @@ To use the SDK in a Maven project:
 <dependency>
     <groupId>io.github.alleyway</groupId>
     <artifactId>bybit-kotlin-api</artifactId>
-    <version>0.4.3</version>
+    <version>0.4.4</version>
 </dependency>
 
 ```
@@ -53,6 +53,8 @@ Make sure you get the right artifacts in your ~/.m2/repository/
 
 Remember to use the escape ("\") for special charactors of the password in the github secrets
 
+**Publish Command:**
+
 ```bash
 ./gradlew build sign publish --exclude-task test -i -PsonatypeUsername= -PsonatypePassword=
 ```
@@ -60,6 +62,6 @@ Remember to use the escape ("\") for special charactors of the password in the g
 ### Release non-snapshot
  - update readme versions
  - commit non-snapshot version
- - create tag of version
- - run gradlew build sign publish locally
+ - create tag of version "git tag v0.x.x"
+ - run _Publish Command_ above
 
