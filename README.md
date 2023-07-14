@@ -62,6 +62,6 @@ Remember to use the escape ("\") for special charactors of the password in the g
 ### Release non-snapshot
  - update readme versions
  - commit non-snapshot version
- - create tag of version "git tag v0.x.x"
- - run _Publish Command_ above
+ - create Release & tag of version in github
+ - run _Publish Command_ above - check _local.properties_ for more info 
 
