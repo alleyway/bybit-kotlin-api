@@ -27,12 +27,19 @@ data class WalletBalanceParams(
 
 @Serializable
 data class CoinResultItem(
+    val coin: String,
     val equity: String,
     val usdValue: String,
-    val unrealisedPnl: String,
     val walletBalance: String,
-    val cumRealisedPnl: String,
-    val coin: String
+    val borrowAmount: String,
+    val availableToBorrow: String,
+    val availableToWithdraw: String,
+    val accruedInterest: String,
+    val totalOrderIM: String,
+    val totalPositionIM: String,
+    val totalPositionMM: String,
+    val unrealisedPnl: String,
+    val cumRealisedPnl: String
 )
 
 @Serializable
