@@ -1,5 +1,6 @@
 package bybit.sdk.shared
 
+import bybit.sdk.Logging
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -24,7 +25,7 @@ fun sha256_HMAC(message: String, secret: String?): String {
         val bytes = sha256_HMAC.doFinal(message.toByteArray())
         hash = bytesToHex(bytes)
     } catch (e: Exception) {
-        println("Error HmacSHA256 ===========" + e.message)
+        Logging.getLogger("sha256_HMAC").error { e.message }
     }
     return hash
 }

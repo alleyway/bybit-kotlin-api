@@ -2,6 +2,7 @@ package bybit.sdk.websocket
 
 import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
+import bybit.sdk.Logging
 import bybit.sdk.Version
 import bybit.sdk.ext.ByBitCompletionCallback
 import bybit.sdk.ext.coroutineToCompletionCallback
@@ -94,6 +95,8 @@ constructor(
 
 ) {
 
+    private val logger = Logging.getLogger(ByBitWebSocketClient::class)
+
     val task = object : TimerTask() {
         override fun run() {
             sendPingAsync(null)
@@ -125,6 +128,10 @@ constructor(
      */
     var coroutineScope: CoroutineScope = GlobalScope
 
+
+    var _subscriptions = emptyList<ByBitWebSocketSubscription>()
+
+    var retryCount = 1L
 
     /**
      * Connect and authenticate to the given [ByBitEndpoint].
@@ -158,9 +165,20 @@ constructor(
                 .consumeAsFlow()
                 .buffer(bufferSize)
                 .onEach(this::processFrame)
-                .onCompletion { listener.onDisconnect(this@ByBitWebSocketClient) }
+                .onCompletion {
+                    logger.info("ByBitWebSocketClient onCompletion!!")
+                    activeConnection = null
+                    listener.onDisconnect(this@ByBitWebSocketClient)
+                    (this@ByBitWebSocketClient::reconnect)()
+                }
+                .catch {
+                    logger.warn("Catch block!")
+                    activeConnection = null
+                    (this@ByBitWebSocketClient::reconnect)()
+                }
                 .launchIn(coroutineScope)
         } catch (ex: Exception) {
+            logger.error("ByBitWebSocketClient caught exception!")
             listener.onError(this, ex)
         }
         sendPing()
@@ -192,7 +210,9 @@ constructor(
      * Calling from Java? See [subscribeBlocking] and [subscribeAsync]
      */
     suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>) {
-        if (subscriptions.isEmpty()) return
+        _subscriptions = subscriptions
+
+        if (_subscriptions.isEmpty()) return
 
         if (
             subscriptions.map { it.topic }.filterIsInstance<ByBitWebsocketTopic.PrivateTopic>().size > 0
@@ -226,7 +246,7 @@ constructor(
 
         activeConnection
             ?.webSocketSession
-            ?.send("""{"op": "subscribe", "args":["${subscriptions.joinToString(separator = "\",\"")}"]}""")
+            ?.send("""{"op": "subscribe", "args":["${_subscriptions.joinToString(separator = "\",\"")}"]}""")
     }
 
     /** Blocking version of [subscribe]  */
@@ -277,6 +297,24 @@ constructor(
     fun disconnectAsync(callback: ByBitCompletionCallback?) =
         coroutineToCompletionCallback(callback, coroutineScope) { disconnect() }
 
+    private suspend fun reconnect() {
+
+        val waitTime = when {
+            retryCount > 50 -> {
+                10000 // max 10 seconds
+            }
+
+            else -> retryCount * 200
+        }
+
+        logger.info("reconnecting...waiting ${waitTime}ms...")
+        Thread.sleep(waitTime)
+        connectBlocking()
+        logger.info("resubscribing...")
+        subscribeBlocking(_subscriptions)
+    }
+
+
     private suspend fun processFrame(frame: Frame) {
         try {
             if (activeConnection?.isAuthenticated == false) {
@@ -322,10 +360,13 @@ constructor(
 
 
             val message = when (frameType) {
-                "pong", "ping", "subscribe", "auth" -> serializer.decodeFromJsonElement(
-                    StatusMessage.serializer(),
-                    frame
-                )
+                "pong", "ping", "subscribe", "auth" -> {
+                    retryCount = 1L
+                    serializer.decodeFromJsonElement(
+                        StatusMessage.serializer(),
+                        frame
+                    )
+                }
 
                 "tickers" -> when (options.endpoint) {
                     ByBitEndpoint.Inverse, ByBitEndpoint.Linear -> serializer.decodeFromJsonElement(

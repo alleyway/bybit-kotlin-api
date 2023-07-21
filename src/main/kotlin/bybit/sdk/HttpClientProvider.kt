@@ -64,6 +64,8 @@ constructor(
     private val engine: HttpClientEngine = OkHttp.create()
 ) : HttpClientProvider {
 
+    private val logger = Logging.getLogger(DefaultJvmHttpClientProvider::class)
+
     open fun buildEngine(): HttpClientEngine = engine
 
     override fun buildClient() =
@@ -87,9 +89,9 @@ constructor(
 
                     if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
                         if (response.status.value != 200) {
-                            println("HTTP error: ${response.status.toString()} ${response.status.description}")
+                            logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
 
-                            println(response.bodyAsText())
+                            logger.warn(response.bodyAsText())
 
                         } else {
                             val error: Error = response.body()
