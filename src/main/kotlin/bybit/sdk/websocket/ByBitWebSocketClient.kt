@@ -299,6 +299,8 @@ constructor(
 
     private suspend fun reconnect() {
 
+        listener.onReconnect(this@ByBitWebSocketClient)
+
         val waitTime = when {
             retryCount > 50 -> {
                 10000 // max 10 seconds

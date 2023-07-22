@@ -4,6 +4,7 @@ interface ByBitWebSocketListener {
     fun onAuthenticated(client: ByBitWebSocketClient)
     fun onReceive(client: ByBitWebSocketClient, message: ByBitWebSocketMessage)
     fun onDisconnect(client: ByBitWebSocketClient)
+    fun onReconnect(client: ByBitWebSocketClient)
     fun onError(client: ByBitWebSocketClient, error: Throwable)
 }
 
@@ -16,5 +17,6 @@ open class DefaultByBitWebSocketListener : ByBitWebSocketListener {
     override fun onAuthenticated(client: ByBitWebSocketClient) { }
     override fun onReceive(client: ByBitWebSocketClient, message: ByBitWebSocketMessage) { }
     override fun onDisconnect(client: ByBitWebSocketClient) { }
+    override fun onReconnect(client: ByBitWebSocketClient) { }
     override fun onError(client: ByBitWebSocketClient, error: Throwable) { }
 }
