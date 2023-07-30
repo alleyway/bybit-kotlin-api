@@ -29,6 +29,7 @@ sealed class ByBitWebSocketMessage {
         @SerialName("S") val side: String,
         @SerialName("v") val volume: Double,
         @SerialName("p") val price: Double,
+        @SerialName("L") val tickDirection: TickDirection,
     )
 
     @Serializable

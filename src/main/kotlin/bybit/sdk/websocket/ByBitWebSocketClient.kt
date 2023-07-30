@@ -95,16 +95,26 @@ constructor(
 
 ) {
 
+    private var lastPongReceived: Instant? = null
+
     private val logger = Logging.getLogger(ByBitWebSocketClient::class)
 
     val task = object : TimerTask() {
         override fun run() {
+
+            lastPongReceived?.let {
+                if (Instant.now().toEpochMilli() - it.toEpochMilli() > 20_000) {
+                    logger.warn("T: did not receive pong in time")
+                    activeConnection = null
+                    reconnectBlocking()
+                }
+            }
             sendPingAsync(null)
         }
     }
 
     init {
-        timer.scheduleAtFixedRate(task, 20000L, options.pingInterval)
+        timer.scheduleAtFixedRate(task, 10_000L, options.pingInterval)
     }
 
     private val serializer by lazy {
@@ -143,24 +153,28 @@ constructor(
             return
         }
 
-        val client = httpClientProvider.buildClient()
-        val session = client.webSocketSession {
-            host = if (options.testnet) {
-                "stream-testnet.bybit.com"
-            } else {
-                "stream.bybit.com"
-            }
+        lastPongReceived = null
 
-            url.protocol = URLProtocol.WSS
-            url.port = URLProtocol.WSS.defaultPort
-            url.path(*options.endpoint.pathComponents)
-
-            headers["User-Agent"] = Version.userAgent
-        }
-
-        activeConnection = WebSocketConnection(client, session)
 
         try {
+            val client = httpClientProvider.buildClient()
+            val session = client.webSocketSession {
+                host = if (options.testnet) {
+                    "stream-testnet.bybit.com"
+                } else {
+                    "stream.bybit.com"
+                }
+
+                url.protocol = URLProtocol.WSS
+                url.port = URLProtocol.WSS.defaultPort
+                url.path(*options.endpoint.pathComponents)
+
+                headers["User-Agent"] = Version.userAgent
+            }
+
+            activeConnection = WebSocketConnection(client, session)
+
+
             session.incoming
                 .consumeAsFlow()
                 .buffer(bufferSize)
@@ -297,6 +311,8 @@ constructor(
     fun disconnectAsync(callback: ByBitCompletionCallback?) =
         coroutineToCompletionCallback(callback, coroutineScope) { disconnect() }
 
+    fun reconnectBlocking() = runBlocking { reconnect() }
+
     private suspend fun reconnect() {
 
         listener.onReconnect(this@ByBitWebSocketClient)
@@ -309,11 +325,21 @@ constructor(
             else -> retryCount * 200
         }
 
-        logger.info("reconnecting...waiting ${waitTime}ms...")
-        Thread.sleep(waitTime)
-        connectBlocking()
-        logger.info("resubscribing...")
-        subscribeBlocking(_subscriptions)
+        retryCount += 1
+
+        try {
+            logger.info("T: reconnecting...waiting ${waitTime}ms...")
+            Thread.sleep(waitTime)
+            connectBlocking()
+            logger.info("T: resubscribing...")
+            subscribeBlocking(_subscriptions)
+        } catch (e: Exception) {
+            logger.info("T: caught execption reconnecting: ${e.message}")
+            activeConnection?.disconnect()
+            activeConnection = null
+            reconnect()
+        }
+
     }
 
 
@@ -362,7 +388,8 @@ constructor(
 
 
             val message = when (frameType) {
-                "pong", "ping", "subscribe", "auth" -> {
+                "ping", "subscribe", "auth" -> {
+                    if (frameType == "ping") lastPongReceived = Instant.now()
                     retryCount = 1L
                     serializer.decodeFromJsonElement(
                         StatusMessage.serializer(),

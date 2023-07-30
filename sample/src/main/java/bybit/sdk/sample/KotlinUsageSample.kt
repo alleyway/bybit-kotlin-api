@@ -43,6 +43,10 @@ suspend fun websocketSample(bybitKey: String, bybitSecret: String) {
                 println("Connected!")
             }
 
+            override fun onReconnect(client: ByBitWebSocketClient) {
+                println("reconnecting")
+            }
+
             override fun onReceive(
                 client: ByBitWebSocketClient,
                 message: ByBitWebSocketMessage
