@@ -20,12 +20,16 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
     ) = coroutineToRestCallback(callback, { getInstrumentsInfo(params) })
 
 
-    /**
-     * Get an iterator to iterate through all pages of results for the given parameters.
-     *
-     * See [getInstrumentsInfo] if you instead need to get exactly one page of results.
-     * See section "Pagination" in the README for more details on iterators.
-     */
+    fun getPublicTradingHistoryBlocking(params: PublicTradingHistoryParams):
+            PublicTradingHistoryResponse = runBlocking { getPublicTradingHistory(params) }
+
+    /** See [getPublicTradingHistoryBlocking] */
+
+    fun getPublicTradingHistory(
+        params: PublicTradingHistoryParams,
+        callback: ByBitRestApiCallback<PublicTradingHistoryResponse>
+    ) = coroutineToRestCallback(callback, { getPublicTradingHistory(params) })
+
 
     fun listSupportedInstruments(
         params: InstrumentsInfoParams,
