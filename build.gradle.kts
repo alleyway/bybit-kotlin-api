@@ -42,6 +42,10 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
+//    val resilience4jVersion = "2.0.0"
+//    implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
+//    implementation("io.github.resilience4j:resilience4j-ratelimiter:$resilience4jVersion")
+
     // Annotation processor that generates Java builders for data classes
     val ktBuilderVersion = "1.2.1"
     implementation("com.thinkinglogic.builder:kotlin-builder-annotation:$ktBuilderVersion")
@@ -55,6 +59,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://jcenter.bintray.com") }
     }
 }
 //

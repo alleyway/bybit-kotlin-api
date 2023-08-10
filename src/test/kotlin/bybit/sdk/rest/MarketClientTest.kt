@@ -2,6 +2,7 @@ package bybit.sdk.rest
 
 
 import bybit.sdk.rest.market.InstrumentsInfoParams
+import bybit.sdk.rest.market.PublicTradingHistoryParams
 import bybit.sdk.shared.Category
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,6 +23,20 @@ internal class MarketClientTest {
 		assertEquals(0, resp.retCode)
 		assertEquals("OK", resp.retMsg)
     }
+
+    @Test
+    fun getPublicTradingHistory() {
+
+        val resp = client.marketClient.getPublicTradingHistoryBlocking(
+            PublicTradingHistoryParams(
+                category = Category.inverse,
+                symbol = "BTCUSD"
+            )
+        )
+        assertEquals(0, resp.retCode)
+        assertEquals("OK", resp.retMsg)
+    }
+
 
     @Test
     fun listSupportedInstruments() {
