@@ -1,6 +1,7 @@
 package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5
+import bybit.sdk.shared.Category
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -27,7 +28,7 @@ suspend fun ByBitOrderClient.amendOrder(
 
 @Builder
 data class AmendOrderParams(
-    val category: String, // linear/inverse/option
+    val category: Category,
     val symbol: String,
     val orderId: String? = null,
     val orderLinkId: String? = null,
