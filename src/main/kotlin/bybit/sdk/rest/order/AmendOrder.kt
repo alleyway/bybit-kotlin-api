@@ -20,7 +20,7 @@ suspend fun ByBitOrderClient.amendOrder(
         )
         params.category.let { parameters["category"] = it.toString() }
         params.symbol.let { parameters["symbol"] = it }
-        params.qty.let { parameters["qty"] = it }
+        params.qty?.let { parameters["qty"] = it }
         params.price?.let { parameters["price"] = it }
         params.orderLinkId?.let { parameters["orderLinkId"] = it }
     }, HttpMethod.Post, false)
@@ -32,7 +32,7 @@ data class AmendOrderParams(
     val symbol: String,
     val orderId: String? = null,
     val orderLinkId: String? = null,
-    val qty: String,
+    val qty: String? = null,
     val price: String? = null
 )
 
