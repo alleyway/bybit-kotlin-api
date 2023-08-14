@@ -4,6 +4,7 @@ import bybit.sdk.rest.APIResponseV5
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.OrderType
 import bybit.sdk.shared.Side
+import bybit.sdk.shared.TimeInForce
 import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -24,6 +25,7 @@ suspend fun ByBitOrderClient.placeOrder(
         params.orderType.let { parameters["orderType"] = it.toString() }
         params.qty.let { parameters["qty"] = it }
         params.price?.let { parameters["price"] = it }
+        params.timeInForce?.let { parameters["timeInForce"] = it.toString() }
         params.orderLinkId?.let { parameters["orderLinkId"] = it }
         params.reduceOnly?.let { parameters["reduceOnly"] = it.toString() }
     }, HttpMethod.Post, false)
@@ -38,6 +40,7 @@ data class PlaceOrderParams(
     val qty: String,
     val reduceOnly: Boolean? = null,
     val price: String? = null,
+    val timeInForce: TimeInForce? = null,
     val orderLinkId: String? = null
 )
 
