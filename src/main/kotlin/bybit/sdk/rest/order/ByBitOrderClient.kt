@@ -72,8 +72,7 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
     fun ordersOpenBlocking(params: OrdersOpenParams):
             OrdersOpenResponse = runBlocking { ordersOpen(params) }
 
-    /** See [orderHistoryBlocking] */
-    fun orderOpen(
+    fun ordersOpen(
         params: OrdersOpenParams,
         callback: ByBitRestApiCallback<OrdersOpenResponse>
     ) = coroutineToRestCallback(callback, { ordersOpen(params) })
