@@ -6,6 +6,7 @@ import bybit.sdk.Logging
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 
 public val okHttpClientProvider: HttpClientProvider
     get() = DefaultOkHttpClientProvider(
@@ -19,7 +20,7 @@ public val okHttpClientProvider: HttpClientProvider
                 val content: String? = response.body?.string()
 
                 if (content !== null) {
-                    val wrappedBody: ResponseBody = ResponseBody.create(response.body?.contentType(), content)
+                    val wrappedBody: ResponseBody = content.toResponseBody(response.body?.contentType())
                     response = response.newBuilder().body(wrappedBody).build()
                     logger.debug(content)
                 }
