@@ -4,10 +4,9 @@ import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.OrderStatus
-import com.thinkinglogic.builder.annotation.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
-
+import lombok.Builder
 
 
 suspend fun ByBitOrderClient.ordersOpen(

@@ -6,8 +6,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.10")
     }
 }
 
@@ -15,9 +15,11 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
-    kotlin("kapt") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
+    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("kapt") version "1.9.10"
+    kotlin("plugin.lombok") version "1.9.10"
+    id("io.freefair.lombok") version "8.1.0"
 }
 
 //tasks.withType<KaptGenerateStubs> {
@@ -33,9 +35,9 @@ plugins {
 dependencies {
 
     implementation("org.slf4j:slf4j-simple:2.0.7")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
 
-    val ktorVersion = "2.3.2"
+    val ktorVersion = "2.3.3"
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-websockets-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp-jvm:$ktorVersion")
@@ -46,12 +48,7 @@ dependencies {
 //    implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 //    implementation("io.github.resilience4j:resilience4j-ratelimiter:$resilience4jVersion")
 
-    // Annotation processor that generates Java builders for data classes
-    val ktBuilderVersion = "1.2.1"
-    implementation("com.thinkinglogic.builder:kotlin-builder-annotation:$ktBuilderVersion")
-    kapt("com.thinkinglogic.builder:kotlin-builder-processor:$ktBuilderVersion")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
     testImplementation(kotlin("test-junit5"))
 }
 

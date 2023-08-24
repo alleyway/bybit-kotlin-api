@@ -4,7 +4,7 @@ import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.ContractType
-import com.thinkinglogic.builder.annotation.Builder
+import lombok.Builder
 import io.ktor.http.*
 import io.ktor.util.*
 import kotlinx.serialization.DeserializationStrategy

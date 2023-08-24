@@ -5,7 +5,7 @@ import bybit.sdk.shared.Category
 import bybit.sdk.shared.OrderType
 import bybit.sdk.shared.Side
 import bybit.sdk.shared.TimeInForce
-import com.thinkinglogic.builder.annotation.Builder
+import lombok.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 

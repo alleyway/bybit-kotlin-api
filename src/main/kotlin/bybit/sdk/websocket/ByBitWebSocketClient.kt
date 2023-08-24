@@ -185,10 +185,12 @@ constructor(
                     listener.onDisconnect(this@ByBitWebSocketClient)
                     (this@ByBitWebSocketClient::reconnect)()
                 }
-                .catch {
-                    logger.warn("Catch block!")
-                    activeConnection = null
-                    (this@ByBitWebSocketClient::reconnect)()
+                .catch { e ->
+                    run {
+                        logger.warn("Catch block! " + e.message)
+                        activeConnection = null
+                        (this@ByBitWebSocketClient::reconnect)()
+                    }
                 }
                 .launchIn(coroutineScope)
         } catch (ex: Exception) {
@@ -329,7 +331,9 @@ constructor(
 
         try {
             logger.info("T: reconnecting...waiting ${waitTime}ms...")
-            Thread.sleep(waitTime)
+            withContext(Dispatchers.IO) {
+                Thread.sleep(waitTime)
+            }
             connectBlocking()
             logger.info("T: resubscribing...")
             subscribeBlocking(_subscriptions)

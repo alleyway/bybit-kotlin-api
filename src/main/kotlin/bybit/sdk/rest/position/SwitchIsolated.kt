@@ -3,7 +3,7 @@ package bybit.sdk.rest.position
 import bybit.sdk.rest.APIResponseV5
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.TradeMode
-import com.thinkinglogic.builder.annotation.Builder
+import lombok.Builder
 import io.ktor.http.*
 
 

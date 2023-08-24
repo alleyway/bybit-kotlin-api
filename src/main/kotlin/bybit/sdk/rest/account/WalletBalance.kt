@@ -2,7 +2,7 @@ package bybit.sdk.rest.account
 
 import bybit.sdk.rest.APIResponseV5
 import bybit.sdk.shared.AccountType
-import com.thinkinglogic.builder.annotation.Builder
+import lombok.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
