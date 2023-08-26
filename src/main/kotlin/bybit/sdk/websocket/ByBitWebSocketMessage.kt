@@ -26,7 +26,7 @@ sealed class ByBitWebSocketMessage {
     data class PublicTradeItem(
         @SerialName("T") val timestamp: Long,
         @SerialName("s") val symbol: String,
-        @SerialName("S") val side: String,
+        @SerialName("S") val side: Side,
         @SerialName("v") val volume: Double,
         @SerialName("p") val price: Double,
         @SerialName("L") val tickDirection: TickDirection,
