@@ -16,6 +16,8 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
 import java.time.Instant
@@ -23,16 +25,6 @@ import java.util.*
 
 private const val TOPIC_MESSAGE_KEY = "topic"
 private const val OPERATION_MESSAGE_KEY = "op"
-
-/*
-
-Spot: wss://stream.bybit.com/v5/public/spot
-USDT and USDC perpetual: wss://stream.bybit.com/v5/public/linear
-Inverse contract: wss://stream.bybit.com/v5/public/inverse
-USDC Option: wss://stream.bybit.com/v5/public/option
-
- */
-
 
 enum class ByBitEndpoint(internal vararg val pathComponents: String) {
     Spot("v5", "public", "spot"),
@@ -105,8 +97,10 @@ constructor(
             lastPongReceived?.let {
                 if (Instant.now().toEpochMilli() - it.toEpochMilli() > 20_000) {
                     logger.warn("T: did not receive pong in time")
-                    activeConnection = null
-                    reconnectBlocking()
+                    runBlocking {
+                        updateActiveConnection(null)
+                        reconnectBlocking()
+                    }
                 }
             }
             sendPingAsync(null)
@@ -123,6 +117,8 @@ constructor(
             ignoreUnknownKeys = true
         }
     }
+
+    private val mutex = Mutex()
 
     private var activeConnection: WebSocketConnection? = null
 
@@ -143,13 +139,22 @@ constructor(
 
     var retryCount = 1L
 
+
+    private suspend fun updateActiveConnection(newValue: WebSocketConnection?) {
+        mutex.withLock {
+            activeConnection = newValue
+        }
+    }
+
     /**
      * Connect and authenticate to the given [ByBitEndpoint].
      *
      * Calling from java? see [connectBlocking] and [connectAsync]
      */
     suspend fun connect() {
+        logger.debug { "connect()..." }
         if (activeConnection != null) {
+            logger.trace { "activeConnection is not null, so returning" }
             return
         }
 
@@ -171,24 +176,26 @@ constructor(
 
                 headers["User-Agent"] = Version.userAgent
             }
+            logger.trace { "activeConnection = WebSocketConnection(client, session)" }
+            updateActiveConnection(WebSocketConnection(client, session))
 
-            activeConnection = WebSocketConnection(client, session)
-
-
+            logger.trace { "consumeAsFlow" }
             session.incoming
                 .consumeAsFlow()
                 .buffer(bufferSize)
                 .onEach(this::processFrame)
                 .onCompletion {
                     logger.info("ByBitWebSocketClient onCompletion!!")
-                    activeConnection = null
+                    activeConnection?.disconnect()
+                    updateActiveConnection(null)
                     listener.onDisconnect(this@ByBitWebSocketClient)
                     (this@ByBitWebSocketClient::reconnect)()
                 }
                 .catch { e ->
                     run {
-                        logger.warn("Catch block! " + e.message)
-                        activeConnection = null
+                        logger.warn("Catch block! exception: $e")
+                        activeConnection?.disconnect()
+                        updateActiveConnection(null)
                         (this@ByBitWebSocketClient::reconnect)()
                     }
                 }
@@ -301,7 +308,7 @@ constructor(
      */
     suspend fun disconnect() {
         activeConnection?.disconnect()
-        activeConnection = null
+        updateActiveConnection(null)
 
         listener.onDisconnect(this)
     }
@@ -335,12 +342,12 @@ constructor(
                 Thread.sleep(waitTime)
             }
             connectBlocking()
-            logger.info("T: resubscribing...")
+            logger.info("T: resubscribing to subscriptions: ${_subscriptions.joinToString(",")}")
             subscribeBlocking(_subscriptions)
         } catch (e: Exception) {
-            logger.info("T: caught execption reconnecting: ${e.message}")
+            logger.info("T: caught exception reconnecting: ${e.message}")
             activeConnection?.disconnect()
-            activeConnection = null
+            updateActiveConnection(null)
             reconnect()
         }
 
