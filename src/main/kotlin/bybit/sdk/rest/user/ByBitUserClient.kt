@@ -18,4 +18,13 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
     ) = coroutineToRestCallback(callback, { getKeyInformation() })
 
 
+    fun modifySubKeyBlocking(params: ModifySubKeyParams):
+            ModifySubKeyResponse = runBlocking { modifySubKey(params) }
+
+    /** See [modifySubKeyBlocking] */
+
+    fun modifySubKey(
+        params: ModifySubKeyParams,
+        callback: ByBitRestApiCallback<ModifySubKeyResponse>
+    ) = coroutineToRestCallback(callback, { modifySubKey(params) })
 }
