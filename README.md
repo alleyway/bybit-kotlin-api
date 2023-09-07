@@ -60,7 +60,7 @@ Remember to use the escape ("\") for special charactors of the password in the g
 ```
 
 ### Release non-snapshot
- - update readme versions
+ - update readme versions and Version.kt file
  - commit non-snapshot version
  - create Release & tag of version in github
  - run _Publish Command_ above - check _local.properties_ for more info 
