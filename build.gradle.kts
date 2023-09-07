@@ -37,7 +37,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.7")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
 
-    val ktorVersion = "2.3.3"
+    val ktorVersion = "2.3.4"
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-websockets-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp-jvm:$ktorVersion")
