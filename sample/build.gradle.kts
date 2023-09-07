@@ -12,7 +12,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
 
     // For custom CIO engine on defaultJvmHttpClientProvider
-    implementation("io.ktor:ktor-client-cio-jvm:2.3.3")
+    implementation("io.ktor:ktor-client-cio-jvm:2.3.4")
 
     // For pretty printing data classes
     implementation("com.tylerthrailkill.helpers:pretty-print:2.0.2")
