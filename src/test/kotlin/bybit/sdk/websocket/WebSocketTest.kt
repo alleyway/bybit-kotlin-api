@@ -1,7 +1,7 @@
 package bybit.sdk.websocket
 
-import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
+import kotlinx.coroutines.*
+import org.junit.jupiter.api.Test
 
 internal class WebSocketTest {
 
@@ -23,42 +23,62 @@ internal class WebSocketTest {
 //        ByBitWebSocketSubscription(ByBitWebsocketTopic.Orderbook.Level_500, "BTCUSD")
     )
 
-    val privateSubscriptions = listOf(
+    val privateSubs = listOf(
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Execution),
         ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Order),
+        ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Wallet)
     )
 
     @Test
     fun publicWebsocketTest() {
-        val wsClient = ByBitWebSocketClient(
+
+        val wsClientOne = ByBitWebSocketClient(
             options = WSClientConfigurableOptions(
                 endpoint = ByBitEndpoint.Inverse,
                 key = bybitKey,
                 secret = bybitSecret,
                 testnet = true,
             ),
-//        httpClientProvider = okHttpClientProvider
         )
+
+//        val wsClientTwo = ByBitWebSocketClient(
+//            options = WSClientConfigurableOptions(
+//                endpoint = ByBitEndpoint.Private,
+//                key = bybitKey,
+//                secret = bybitSecret,
+//                testnet = true,
+//            ),
+//        )
+
         runBlocking {
-            wsClient.connect(publicSubscriptions)
 
-            val channel = wsClient.getWebSocketEventChannel()
+            val scopeOne = CoroutineScope(Dispatchers.Default + Job())
+            scopeOne.launch {
+                wsClientOne.connect(listOf(ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "BTCUSD")))
 
-            while (true) {
-                when (val message = channel.receive()) {
-                    is ByBitWebSocketMessage.StatusMessage -> {
-                        message.success?.let {
-                            if (!it) {
-                                println("Error: " + message)
-                            }
-                        }
-                    }
+                val channel = wsClientOne.getWebSocketEventChannel()
 
-                    else -> {
-                        println(message.toString())
-                    }
+                while (true) {
+                    val msg = channel.receive()
+                    println(msg)
+//                    (this@::handler)(msg)
                 }
             }
 
+//            val scopeTwo = CoroutineScope(Dispatchers.Default + Job())
+//
+//
+//            scopeTwo.launch {
+//                wsClientTwo.connect(privateSubs)
+//                val channel = wsClientOne.getWebSocketEventChannel()
+//                while (true) {
+//                    val msg = channel.receive()
+//                    println(msg)
+////                    (this@::handler)(msg)
+//                }
+//            }
+
+            delay(30_000)
         }
 
     }
@@ -75,7 +95,7 @@ internal class WebSocketTest {
 //        httpClientProvider = okHttpClientProvider
         )
         runBlocking {
-            wsClient.connect(privateSubscriptions)
+            wsClient.connect(privateSubs)
 
             val channel = wsClient.getWebSocketEventChannel()
 

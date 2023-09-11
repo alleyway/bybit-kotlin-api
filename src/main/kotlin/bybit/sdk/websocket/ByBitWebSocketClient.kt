@@ -602,6 +602,11 @@ constructor(
                     onPong(msg.reqId!!)
                     msg
                 }
+                "pong" -> { // this gets used in the "private" endpoint...API oddness
+                    val msg = serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
+                    onPong(msg.reqId!!)
+                    msg
+                }
                 "auth" -> {
                     val msg = serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
                     if (msg.success!!) {
