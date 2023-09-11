@@ -10,7 +10,6 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -136,14 +135,75 @@ constructor() : HttpClientProvider {
                     connectAttempts = 5
                 }
             }
-            install(WebSockets) {
-                pingInterval = -1L
-                contentConverter = KotlinxWebsocketSerializationConverter(Json)
+            install(HttpTimeout) {
+                connectTimeoutMillis = 5000
+                socketTimeoutMillis= 5000
+
+            }
+            install(ContentNegotiation) {
+                json(Json {
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+            HttpResponseValidator {
+                validateResponse { response ->
+
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
+                        if (response.status.value != 200) {
+                            logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
+
+                            logger.warn(response.bodyAsText())
+
+                        } else {
+                            val error: Error = response.body()
+                            if (error.retCode != 0) {
+                                throw CustomResponseException(
+                                    response,
+                                    "Code: ${error.retCode}, message: ${error.retMsg}"
+                                )
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+    override fun getDefaultRestURLBuilder() =
+        URLBuilder(
+            protocol = URLProtocol.HTTPS,
+            port = DEFAULT_PORT
+        )
+}
+
+
+open class DefaultCIOWebSocketClientProvider
+constructor() : HttpClientProvider {
+
+    private val logger = Logging.getLogger(DefaultCIOWebSocketClientProvider::class)
+
+    override fun buildClient() =
+        HttpClient(CIO) {
+            engine {
+                maxConnectionsCount = 1000
+                endpoint {
+                    maxConnectionsPerRoute = 100
+                    pipelineMaxSize = 20
+                    keepAliveTime = 5000
+                    connectTimeout = 5000
+                    connectAttempts = 5
+                }
             }
             install(HttpTimeout) {
                 connectTimeoutMillis = 5000
                 socketTimeoutMillis= 5000
 
+            }
+            install(WebSockets) {
+                pingInterval = -1L
+//                contentConverter = KotlinxWebsocketSerializationConverter(Json)
             }
             install(ContentNegotiation) {
                 json(Json {

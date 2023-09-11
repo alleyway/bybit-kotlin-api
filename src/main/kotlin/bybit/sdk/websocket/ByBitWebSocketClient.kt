@@ -9,6 +9,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.plugins.websocket.cio.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
@@ -57,7 +58,7 @@ class ByBitWebSocketClient
 @JvmOverloads
 constructor(
     val options: WSClientConfigurableOptions,
-    val httpClientProvider: HttpClientProvider = DefaultCIOHttpClientProvider(),
+    val httpClientProvider: HttpClientProvider = DefaultCIOWebSocketClientProvider(),
 ) {
 
     internal val client = httpClientProvider.buildClient()
@@ -218,6 +219,7 @@ constructor(
             }
             logger.debug("It looks like the WebSocket channel has been replaced")
         })
+
 
         subscribe(_subscriptions)
 
@@ -415,7 +417,7 @@ constructor(
 
     suspend fun connect(subscriptions: List<ByBitWebSocketSubscription>) {
         _subscriptions = subscriptions
-        logger.debug { "initial connect()..." }
+        logger.debug { "initial connect(${options.endpoint})..." }
         enableReconnecting()
         websocket(::handleWebSocket)
         delay(10_000)
