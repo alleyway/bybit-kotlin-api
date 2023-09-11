@@ -22,7 +22,8 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Run build with Maven Wrapper
-        run: ./mvnw -DskipTests --batch-mode deploy
+        run: cat /home/runner/.m2/settings.xml
+#        run: ./mvnw -DskipTests --batch-mode deploy
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          MAVEN_PASSWORD: "myfacke"
