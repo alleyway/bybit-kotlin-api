@@ -17,7 +17,7 @@ suspend fun ByBitUserClient.modifySubKey(
         )
             params.readOnly?.let { parameters["readOnly"] = it.toString() }
             params.ips?.let {
-                parameters["ips"] = it!!.joinToString(prefix = "[", postfix = "]")
+                parameters["ips"] = it.joinToString(prefix = "[", postfix = "]")
             }
 
         }, HttpMethod.Post, false)

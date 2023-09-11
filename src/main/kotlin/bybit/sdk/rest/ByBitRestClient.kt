@@ -1,5 +1,6 @@
 package bybit.sdk.rest
 
+import bybit.sdk.DefaultCIOHttpClientProvider
 import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
@@ -35,7 +36,7 @@ constructor(
     private val apiKey: String?,
     private val secret: String?,
     testnet: Boolean,
-    private val httpClientProvider: HttpClientProvider = DefaultJvmHttpClientProvider()
+    private val httpClientProvider: HttpClientProvider = DefaultCIOHttpClientProvider()
 ) {
 
     constructor() : this(

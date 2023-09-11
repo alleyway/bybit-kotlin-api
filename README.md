@@ -1,4 +1,4 @@
-# ByBit Java API Client SDK (written in Kotlin)
+# ByBit jvm API Client SDK (written in Kotlin)
 
 NOTE: this library is in early development stages. There is NO WARRANTY.
 

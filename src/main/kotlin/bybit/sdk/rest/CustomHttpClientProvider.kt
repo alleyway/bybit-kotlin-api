@@ -25,8 +25,6 @@ public val okHttpClientProvider: HttpClientProvider
                     logger.debug(content)
                 }
 
-
-
                 return response
             }
         }),

@@ -31,12 +31,6 @@ tasks {
     }
 }
 
-task(name = "javaSample", type = JavaExec::class) {
-    group = "samples"
-    description = "Sample usage of the bybit client from Java"
-//    mainClass = "bybit.sdk.sample.JavaUsageSample"
-    classpath = sourceSets["main"].runtimeClasspath
-}
 
 task(name = "kotlinSample", type = JavaExec::class) {
     group = "samples"
