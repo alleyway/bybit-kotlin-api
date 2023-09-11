@@ -15,15 +15,14 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'oracle'
+          distribution: 'adopt'
           cache: maven
           overwrite-settings: true
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Run build with Maven Wrapper
-        run: echo $MAVEN_USERNAME
-#        run: ./mvnw -DskipTests --batch-mode deploy
+        run: ./mvnw -DskipTests --batch-mode deploy
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
