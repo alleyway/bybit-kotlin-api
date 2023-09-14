@@ -5,13 +5,8 @@ import org.junit.jupiter.api.Test
 
 internal class WebSocketTest {
 
-    val bybitKey: String
-    val bybitSecret: String
-
-    init {
-        bybitKey = System.getenv("BYBIT_API_KEY")
-        bybitSecret = System.getenv("BYBIT_SECRET")
-    }
+    val bybitKey: String = System.getenv("BYBIT_API_KEY")
+    val bybitSecret: String = System.getenv("BYBIT_SECRET")
 
     val privateSubs = listOf(
         ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Execution),

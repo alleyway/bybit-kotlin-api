@@ -4,7 +4,6 @@ import bybit.sdk.DefaultCIOHttpClientProvider
 import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
-import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.account.ByBitAccountClient
 import bybit.sdk.rest.market.ByBitMarketClient
 import bybit.sdk.rest.order.ByBitOrderClient
@@ -33,24 +32,11 @@ import java.time.Instant
 class ByBitRestClient
 @JvmOverloads
 constructor(
-    private val apiKey: String?,
-    private val secret: String?,
-    testnet: Boolean,
-    private val httpClientProvider: HttpClientProvider = DefaultCIOHttpClientProvider()
+    val apiKey: String?,
+    val secret: String?,
+    val testnet: Boolean = false,
+    val httpClientProvider: HttpClientProvider = DefaultCIOHttpClientProvider()
 ) {
-
-    constructor() : this(
-        ByBitProperties.APIKEY,
-        ByBitProperties.SECRET,
-        ByBitProperties.TESTNET
-    )
-
-    constructor(httpClientProvider: HttpClientProvider) : this(
-        ByBitProperties.APIKEY,
-        ByBitProperties.SECRET,
-        ByBitProperties.TESTNET,
-        httpClientProvider
-    )
 
     val accountClient by lazy { ByBitAccountClient(this) }
 

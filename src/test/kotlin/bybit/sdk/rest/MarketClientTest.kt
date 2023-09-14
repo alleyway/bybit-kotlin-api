@@ -9,13 +9,18 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class MarketClientTest {
-    private var client: ByBitRestClient = ByBitRestClient(httpClientProvider = okHttpClientProvider)
 
+    private var restClient: ByBitRestClient =
+        ByBitRestClient(
+            apiKey = System.getenv("BYBIT_API_KEY"),
+            secret = System.getenv("BYBIT_SECRET"),
+            testnet = true,
+            httpClientProvider = okHttpClientProvider)
 
     @Test
     fun getInstrumentsInfo() {
 
-        val resp = client.marketClient.getInstrumentsInfoBlocking(
+        val resp = restClient.marketClient.getInstrumentsInfoBlocking(
             InstrumentsInfoParams(
                 category = Category.inverse
             )
@@ -27,7 +32,7 @@ internal class MarketClientTest {
     @Test
     fun getPublicTradingHistory() {
 
-        val resp = client.marketClient.getPublicTradingHistoryBlocking(
+        val resp = restClient.marketClient.getPublicTradingHistoryBlocking(
             PublicTradingHistoryParams(
                 category = Category.inverse,
                 symbol = "BTCUSD"
@@ -36,7 +41,6 @@ internal class MarketClientTest {
         assertEquals(0, resp.retCode)
         assertEquals("OK", resp.retMsg)
     }
-
 
     @Test
     fun listSupportedInstruments() {
@@ -47,7 +51,7 @@ internal class MarketClientTest {
 //			category = "linear"
         )
 
-        val resp = client.marketClient.listSupportedInstruments(params).asSequence().toList()
+        val resp = restClient.marketClient.listSupportedInstruments(params).asSequence().toList()
 
         resp.forEach {
             println(it.symbol)

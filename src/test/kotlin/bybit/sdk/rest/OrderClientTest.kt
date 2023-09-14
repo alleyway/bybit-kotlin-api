@@ -12,13 +12,16 @@ import kotlin.test.assertTrue
 
 internal class OrderClientTest {
 
-	private var client: ByBitRestClient = ByBitRestClient(httpClientProvider = okHttpClientProvider)
-
+	private var restClient: ByBitRestClient =
+		ByBitRestClient(
+			apiKey = System.getenv("BYBIT_API_KEY"),
+			secret = System.getenv("BYBIT_SECRET"),
+			testnet = true,
+			httpClientProvider = okHttpClientProvider)
 
 	@Test
 	fun orderHistoryTest() {
-
-		val resp = client.orderClient.orderHistoryBlocking(
+		val resp = restClient.orderClient.orderHistoryBlocking(
 			OrderHistoryParams(Category.spot, "BTCUSDT"))
 
 		assertEquals(0, resp.retCode)
@@ -27,22 +30,19 @@ internal class OrderClientTest {
 
 	@Test
 	fun orderHistoryPaginatedTest() {
-
-		val resp = client.orderClient.orderHistoryPaginated(
+		val resp = restClient.orderClient.orderHistoryPaginated(
 			OrderHistoryParams(Category.spot, "BTCUSDT", limit= 1)).asSequence().toList()
 
 		resp.forEach {
 			println(it.orderId)
 		}
-
 	}
 
 
 
 	@Test
 	fun placeOrderTest() {
-
-		val resp = client.orderClient.placeOrderBlocking(
+		val resp = restClient.orderClient.placeOrderBlocking(
 			PlaceOrderParams(Category.spot,
 				"BTCUSDT", Side.Buy, OrderType.Limit,
 				"0.1",
@@ -57,7 +57,7 @@ internal class OrderClientTest {
 
 		Thread.sleep(5000)
 
-		val cancelOrderResp = client.orderClient.cancelOrderBlocking(
+		val cancelOrderResp = restClient.orderClient.cancelOrderBlocking(
 			CancelOrderParams(Category.spot,
 				"BTCUSDT",
 				orderId
@@ -69,7 +69,7 @@ internal class OrderClientTest {
 
 	@Test
 	fun ordersOpenTest() {
-		val resp = client.orderClient.ordersOpenPaginated(
+		val resp = restClient.orderClient.ordersOpenPaginated(
 			OrdersOpenParams(Category.spot)
 		)
 		val items = resp.asSequence().toList()
@@ -79,13 +79,13 @@ internal class OrderClientTest {
 
 	@Test
 	fun cancelAllOrdersTest() {
-		val spotResponse = client.orderClient.cancelAllOrdersBlocking(
+		val spotResponse = restClient.orderClient.cancelAllOrdersBlocking(
 			CancelAllOrdersParams(Category.spot)
 		)
 		assertTrue(spotResponse.retCode == 0)
 		assertTrue(spotResponse is CancelAllOrdersResponse.CancelAllOrdersResponseSpot)
 
-		val linearResponse = client.orderClient.cancelAllOrdersBlocking(
+		val linearResponse = restClient.orderClient.cancelAllOrdersBlocking(
 			CancelAllOrdersParams(Category.linear, settleCoin = "USDT")
 		)
 		assertTrue(linearResponse.retCode == 0)
