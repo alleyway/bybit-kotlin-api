@@ -4,7 +4,7 @@ import bybit.sdk.rest.APIResponseV5Paginatable
 import bybit.sdk.rest.ListResult
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.ContractType
-import lombok.Builder
+import bybit.sdk.shared.OptionsType
 import io.ktor.http.*
 import io.ktor.util.*
 import kotlinx.serialization.DeserializationStrategy
@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
+import lombok.Builder
 import java.util.*
 
 
@@ -90,7 +91,7 @@ sealed class InstrumentsInfoResultItem {
         override val quoteCoin: String = "",
         override val status: String = "",
         val lotSizeFilter: LotSizeFilterShared,
-        val optionsType: String
+        val optionsType: OptionsType
     ) : InstrumentsInfoResultItem()
 
 
