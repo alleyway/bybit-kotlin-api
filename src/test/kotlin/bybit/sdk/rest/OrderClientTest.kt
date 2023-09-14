@@ -46,7 +46,7 @@ internal class OrderClientTest {
 			PlaceOrderParams(Category.spot,
 				"BTCUSDT", Side.Buy, OrderType.Limit,
 				"0.1",
-				price = 24_000.toString()
+				price = 4_000.toString()
 				)
 		)
 
