@@ -12,6 +12,7 @@
     <packaging>jar</packaging>
     <name>bybit kotlin api</name>
     <description>Library for interfacing with ByBit written in Kotlin</description>
+    <url>https://github.com/alleyway/bybit-kotlin-api</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
