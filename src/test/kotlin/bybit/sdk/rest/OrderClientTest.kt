@@ -31,7 +31,7 @@ internal class OrderClientTest {
 	@Test
 	fun orderHistoryPaginatedTest() {
 		val resp = restClient.orderClient.orderHistoryPaginated(
-			OrderHistoryParams(Category.spot, "BTCUSDT", limit= 1)).asSequence().toList()
+			OrderHistoryParams(Category.spot, "BTCUSD", limit= 10)).asSequence().toList()
 
 		resp.forEach {
 			println(it.orderId)
@@ -43,9 +43,9 @@ internal class OrderClientTest {
 	@Test
 	fun placeOrderTest() {
 		val resp = restClient.orderClient.placeOrderBlocking(
-			PlaceOrderParams(Category.spot,
-				"BTCUSDT", Side.Buy, OrderType.Limit,
-				"0.1",
+			PlaceOrderParams(Category.inverse,
+				"BTCUSD", Side.Buy, OrderType.Limit,
+				"1.0",
 				price = 4_000.toString()
 				)
 		)
@@ -58,8 +58,8 @@ internal class OrderClientTest {
 		Thread.sleep(5000)
 
 		val cancelOrderResp = restClient.orderClient.cancelOrderBlocking(
-			CancelOrderParams(Category.spot,
-				"BTCUSDT",
+			CancelOrderParams(Category.inverse,
+				"BTCUSD",
 				orderId
 			)
 		)
@@ -70,7 +70,7 @@ internal class OrderClientTest {
 	@Test
 	fun ordersOpenTest() {
 		val resp = restClient.orderClient.ordersOpenPaginated(
-			OrdersOpenParams(Category.spot)
+			OrdersOpenParams(Category.inverse)
 		)
 		val items = resp.asSequence().toList()
 		assertTrue(items.size > 0)
