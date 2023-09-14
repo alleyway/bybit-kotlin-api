@@ -13,16 +13,6 @@ internal class WebSocketTest {
         bybitSecret = System.getenv("BYBIT_SECRET")
     }
 
-    val publicSubscriptions = listOf(
-//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "ETHUSD"),
-        ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "BTCUSD"),
-//        ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Order, "BTCUSD"),
-//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD"),
-//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Tickers, "BTCUSD"),
-//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Liquidations, "BTCUSD"),
-//        ByBitWebSocketSubscription(ByBitWebsocketTopic.Orderbook.Level_500, "BTCUSD")
-    )
-
     val privateSubs = listOf(
         ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Execution),
         ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Order),
@@ -85,7 +75,7 @@ internal class WebSocketTest {
 
     @Test
     fun privateWebsocketTest() {
-        val wsClient = ByBitWebSocketClient(
+        val wsClientPrivate = ByBitWebSocketClient(
             options = WSClientConfigurableOptions(
                 endpoint = ByBitEndpoint.Private,
                 key = bybitKey,
@@ -94,27 +84,31 @@ internal class WebSocketTest {
             ),
 //        httpClientProvider = okHttpClientProvider
         )
+
+        val scopeOne = CoroutineScope(Dispatchers.Default + Job())
+
         runBlocking {
-            wsClient.connect(privateSubs)
+            scopeOne.launch {
 
-            val channel = wsClient.getWebSocketEventChannel()
+                wsClientPrivate.connect(privateSubs)
 
-            while (true) {
-
-                when (val message = channel.receive()) {
-                    is ByBitWebSocketMessage.StatusMessage -> {
-                        message.success?.let {
-                            if (!it) {
-                                println("Error: " + message)
+                val channel = wsClientPrivate.getWebSocketEventChannel()
+                while (true) {
+                    when (val message = channel.receive()) {
+                        is ByBitWebSocketMessage.StatusMessage -> {
+                            message.success?.let {
+                                if (!it) {
+                                    println("Error: " + message)
+                                }
                             }
                         }
-                    }
-
-                    else -> {
-                        println(message.toString())
+                        else -> {
+                            println(message.toString())
+                        }
                     }
                 }
             }
+            delay(30_000)
         }
     }
 }
