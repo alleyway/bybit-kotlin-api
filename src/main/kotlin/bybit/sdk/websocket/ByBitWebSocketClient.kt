@@ -221,7 +221,7 @@ constructor(
         })
 
 
-        subscribe(_subscriptions)
+        subscribe()
 
         try {
             while (true) {
@@ -514,18 +514,20 @@ constructor(
      * current cluster.
      *
      */
-    suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>) {
+    suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>? = null) {
 
-        subscriptions.forEach{
+        val subsToAddNow = subscriptions ?: _subscriptions
+
+        subscriptions?.forEach{
             if (!_subscriptions.contains(it)) {
                 _subscriptions.add(it)
             }
         }
 
-        if (_subscriptions.isEmpty()) return
+        if (subsToAddNow.isEmpty()) return
 
         if (
-            subscriptions.map { it.topic }.filterIsInstance<ByBitWebsocketTopic.PrivateTopic>()
+            subsToAddNow.map { it.topic }.filterIsInstance<ByBitWebsocketTopic.PrivateTopic>()
                 .isNotEmpty() && !isAuthenticated.get()
         ) {
             require(options.endpoint.equals(ByBitEndpoint.Private)) { "Endpoint must be 'Private' to subscribe to private topics!" }
@@ -549,8 +551,8 @@ constructor(
             )
             delay(400)
         }
-        logger.info { "T: Subscribing to:  ${_subscriptions.joinToString(" , ")}" }
-        sendText("""{"op": "subscribe", "args":["${_subscriptions.joinToString(separator = "\",\"")}"]}""")
+        logger.info { "T: Subscribing to:  ${subsToAddNow.joinToString(" , ")}" }
+        sendText("""{"op": "subscribe", "args":["${subsToAddNow.joinToString(separator = "\",\"")}"]}""")
     }
 
     /**
