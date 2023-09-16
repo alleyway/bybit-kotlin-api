@@ -93,7 +93,7 @@ constructor(
      */
     var sendRaw: Boolean = false
 
-    private var _subscriptions = emptyList<ByBitWebSocketSubscription>()
+    private val _subscriptions = mutableListOf<ByBitWebSocketSubscription>()
 
     var isAuthenticated = AtomicBoolean(false)
 
@@ -416,7 +416,11 @@ constructor(
     }
 
     suspend fun connect(subscriptions: List<ByBitWebSocketSubscription>) {
-        _subscriptions = subscriptions
+        subscriptions.forEach{
+            if (!_subscriptions.contains(it)) {
+                _subscriptions.add(it)
+            }
+        }
         logger.debug { "initial connect(${options.endpoint})..." }
         enableReconnecting()
         websocket(::handleWebSocket)
@@ -511,7 +515,12 @@ constructor(
      *
      */
     suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>) {
-        _subscriptions = subscriptions
+
+        subscriptions.forEach{
+            if (!_subscriptions.contains(it)) {
+                _subscriptions.add(it)
+            }
+        }
 
         if (_subscriptions.isEmpty()) return
 

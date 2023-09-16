@@ -14,6 +14,26 @@ data class ByBitWebSocketSubscription(
             topic.prefix
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ByBitWebSocketSubscription
+
+        if (topic != other.topic) return false
+        if (symbol != other.symbol) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = topic.hashCode()
+        result = 31 * result + symbol.hashCode()
+        return result
+    }
+
+
 }
 
 sealed class ByBitWebsocketTopic(val prefix: String, val extra: String = "") {
