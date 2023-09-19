@@ -86,7 +86,7 @@ sealed class ByBitWebSocketMessage {
     @Serializable
     data class OrderBookItem(
         @SerialName("s") val symbol: String? = null,
-        @SerialName("b") val bids: List<List<Double>> = emptyList(),
+        @SerialName("b") val bids: List<List<Double>> = emptyList(), // [0] is asking price, [1] is asking size
         @SerialName("a") val asks: List<List<Double>> = emptyList(),
         @SerialName("u") val updateId: Int,
     )
