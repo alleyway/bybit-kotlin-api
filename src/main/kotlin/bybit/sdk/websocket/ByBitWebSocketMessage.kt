@@ -172,15 +172,20 @@ sealed class ByBitWebSocketMessage {
         val equity: String,
         val usdValue: String,
         val walletBalance: String,
-        val availableToWithdraw: String,
-        val availableToBorrow: String,
+        val free: String? = null, // only for Classic SPOT
+        val locked: String? = null,
         val borrowAmount: String,
+        val availableToBorrow: String,
+        val availableToWithdraw: String,
         val accruedInterest: String,
         val totalOrderIM: String,
         val totalPositionIM: String,
         val totalPositionMM: String,
         val unrealisedPnl: String,
-        val cumRealisedPnl: String
+        val cumRealisedPnl: String,
+        val bonus: String? = null, // unique field for UNIFIED account
+        val collateralSwitch: Boolean? = null,
+        val marginCollateral: Boolean? = null
     )
 
     @Serializable

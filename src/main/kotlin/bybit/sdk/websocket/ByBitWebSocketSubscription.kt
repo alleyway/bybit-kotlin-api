@@ -72,6 +72,7 @@ sealed class ByBitWebsocketTopic(val prefix: String, val extra: String = "") {
         object Execution : PrivateTopic("execution")
         object Order : PrivateTopic("order")
         object Wallet : PrivateTopic("wallet")
+        object Position : PrivateTopic("position")
     }
 
     object Liquidations : ByBitWebsocketTopic("liquidation")
