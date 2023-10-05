@@ -18,7 +18,9 @@ import okhttp3.Interceptor
 @Serializable
 data class Error(val retCode: Int, val retMsg: String)
 
-class CustomResponseException(response: HttpResponse, cachedResponseText: String) :
+class CustomResponseException(response: HttpResponse, cachedResponseText: String,
+                              val retCode: Int? = null,
+                              val retMsg: String? = null) :
     ResponseException(response, cachedResponseText) {
     override val message: String = "Custom server error: ${response.call.request.url}. " +
             "HTTP Status: ${response.status} Text: \"$cachedResponseText\""
@@ -160,7 +162,9 @@ constructor() : HttpClientProvider {
                             if (error.retCode != 0) {
                                 throw CustomResponseException(
                                     response,
-                                    "Code: ${error.retCode}, message: ${error.retMsg}"
+                                    "Code: ${error.retCode}, message: ${error.retMsg}",
+                                    retCode = error.retCode,
+                                    retMsg = error.retMsg
                                 )
                             }
                         }
