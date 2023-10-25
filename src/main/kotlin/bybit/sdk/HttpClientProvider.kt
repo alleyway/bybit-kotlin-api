@@ -3,7 +3,6 @@ package bybit.sdk
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -18,9 +17,11 @@ import okhttp3.Interceptor
 @Serializable
 data class Error(val retCode: Int, val retMsg: String)
 
-class CustomResponseException(response: HttpResponse, cachedResponseText: String,
-                              val retCode: Int? = null,
-                              val retMsg: String? = null) :
+class CustomResponseException(
+    response: HttpResponse, cachedResponseText: String,
+    val retCode: Int? = null,
+    val retMsg: String? = null
+) :
     ResponseException(response, cachedResponseText) {
     override val message: String = "Custom server error: ${response.call.request.url}. " +
             "HTTP Status: ${response.status} Text: \"$cachedResponseText\""
@@ -78,7 +79,7 @@ constructor(
             }
             install(HttpTimeout) {
                 connectTimeoutMillis = 5000
-                socketTimeoutMillis= 5000
+                socketTimeoutMillis = 5000
 
             }
             install(ContentNegotiation) {
@@ -90,7 +91,9 @@ constructor(
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code")
+                            .equals("0")
+                    ) {
                         if (response.status.value != 200) {
                             logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
 
@@ -126,20 +129,25 @@ constructor() : HttpClientProvider {
     private val logger = Logging.getLogger(DefaultCIOHttpClientProvider::class)
 
     override fun buildClient() =
-        HttpClient(CIO) {
+        HttpClient(OkHttp) {
             engine {
-                maxConnectionsCount = 1000
-                endpoint {
-                    maxConnectionsPerRoute = 100
-                    pipelineMaxSize = 20
-                    keepAliveTime = 5000
-                    connectTimeout = 5000
-                    connectAttempts = 5
+                config {
+                    followRedirects(true)
                 }
+                // options for CIO engine
+//                    maxConnectionsCount = 1000
+//                    endpoint {
+//                        maxConnectionsPerRoute = 100
+//                        pipelineMaxSize = 20
+//                        keepAliveTime = 5000
+//                        connectTimeout = 5000
+//                        connectAttempts = 5
+//                    }
+
             }
             install(HttpTimeout) {
                 connectTimeoutMillis = 5000
-                socketTimeoutMillis= 5000
+                socketTimeoutMillis = 5000
 
             }
             install(ContentNegotiation) {
@@ -151,7 +159,9 @@ constructor() : HttpClientProvider {
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code")
+                            .equals("0")
+                    ) {
                         if (response.status.value != 200) {
                             logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
 
@@ -189,20 +199,25 @@ constructor() : HttpClientProvider {
     private val logger = Logging.getLogger(DefaultCIOWebSocketClientProvider::class)
 
     override fun buildClient() =
-        HttpClient(CIO) {
+        HttpClient(OkHttp) {
             engine {
-                maxConnectionsCount = 1000
-                endpoint {
-                    maxConnectionsPerRoute = 100
-                    pipelineMaxSize = 20
-                    keepAliveTime = 5000
-                    connectTimeout = 5000
-                    connectAttempts = 5
+                config {
+                    followRedirects(true)
                 }
-            }
+            }            // options for CIO:
+//            engine {
+//                maxConnectionsCount = 1000
+//                endpoint {
+//                    maxConnectionsPerRoute = 100
+//                    pipelineMaxSize = 20
+//                    keepAliveTime = 5000
+//                    connectTimeout = 5000
+//                    connectAttempts = 5
+//                }
+//            }
             install(HttpTimeout) {
                 connectTimeoutMillis = 5000
-                socketTimeoutMillis= 5000
+                socketTimeoutMillis = 5000
 
             }
             install(WebSockets) {
@@ -218,7 +233,9 @@ constructor() : HttpClientProvider {
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code").equals("0")) {
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code")
+                            .equals("0")
+                    ) {
                         if (response.status.value != 200) {
                             logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
 
