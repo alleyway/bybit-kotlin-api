@@ -77,7 +77,7 @@ sealed class ByBitWebSocketMessage {
     @Serializable
     data class LiquidationItem(
         val price: Double,
-        val side: String,
+        val side: Side,
         val size: Double,
         val symbol: String,
         val updatedTime: Long,
