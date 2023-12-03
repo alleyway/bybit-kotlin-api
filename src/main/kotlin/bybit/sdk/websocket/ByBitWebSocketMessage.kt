@@ -249,6 +249,42 @@ sealed class ByBitWebSocketMessage {
     )
 
     @Serializable
+    data class PositionItem(
+        val positionIdx: Int,
+        val tradeMode: Int,
+        val riskId: Int,
+        val riskLimitValue: String,
+        val symbol: String,
+        val side: Side,
+        val size: String,
+        val entryPrice: String,
+        val leverage: String,
+        val positionValue: String,
+        val positionBalance: String,
+        val markPrice: String,
+        val positionIM: String,
+        val positionMM: String,
+        val takeProfit: String,
+        val stopLoss: String,
+        val trailingStop: String,
+        val unrealisedPnl:String,
+        val cumRealisedPnl: String,
+        val createdTime: String,
+        val updatedTime: String,
+        val tpslMode: String,
+        val liqPrice: String,
+        val bustPrice: String,
+        val category: Category,
+        val positionStatus: PositionStatus,
+        val adlRankIndicator: Int,
+        val autoAddMargin: Int,
+        val leverageSysUpdatedTime: String,
+        val mmrSysUpdatedTime: String = "",
+        val seq: Long,
+        val isReduceOnly: Boolean
+    )
+
+    @Serializable
     sealed class PrivateTopicResponse : ByBitWebSocketMessage() {
 
         val id: String? = null
@@ -270,6 +306,11 @@ sealed class ByBitWebSocketMessage {
         @Serializable
         data class Wallet(
             val data: List<WalletItem>
+        ) : PrivateTopicResponse()
+
+        @Serializable
+        data class Position(
+            val data: List<PositionItem>
         ) : PrivateTopicResponse()
     }
 

@@ -3,9 +3,9 @@ package bybit.sdk.rest.position
 import bybit.sdk.rest.APIResponseV5
 import bybit.sdk.shared.Category
 import bybit.sdk.shared.Side
-import lombok.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import lombok.Builder
 
 suspend fun ByBitPositionClient.getPositionInfo(
     params: PositionInfoParams
@@ -34,11 +34,14 @@ data class PositionInfoListResultItem(
     val side: Side,
     val size: String,
     val avgPrice: String,
+    val leverage: String,
     val positionValue: String,
+    val positionBalance: String,
     val tradeMode: Int,
-
+    val liqPrice: String,
     val markPrice: String,
-
+    val positionIM: String,
+    val positionMM: String,
     val createdTime: String,
     val updatedTime: String,
 )

@@ -660,6 +660,7 @@ constructor(
                 "execution" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Execution.serializer(), frame)
                 "order" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Order.serializer(), frame)
                 "wallet" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Wallet.serializer(), frame)
+                "position" -> serializer.decodeFromJsonElement(PrivateTopicResponse.Position.serializer(), frame)
                 else -> RawMessage(frame.toString())
             }
 
