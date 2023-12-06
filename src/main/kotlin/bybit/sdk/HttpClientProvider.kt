@@ -3,6 +3,7 @@ package bybit.sdk
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -129,20 +130,20 @@ constructor() : HttpClientProvider {
     private val logger = Logging.getLogger(DefaultCIOHttpClientProvider::class)
 
     override fun buildClient() =
-        HttpClient(OkHttp) {
+        HttpClient(CIO) {
             engine {
-                config {
-                    followRedirects(true)
-                }
+//                config {
+//                    followRedirects(true)
+//                }
                 // options for CIO engine
-//                    maxConnectionsCount = 1000
-//                    endpoint {
-//                        maxConnectionsPerRoute = 100
-//                        pipelineMaxSize = 20
-//                        keepAliveTime = 5000
-//                        connectTimeout = 5000
-//                        connectAttempts = 5
-//                    }
+                    maxConnectionsCount = 1000
+                    endpoint {
+                        maxConnectionsPerRoute = 100
+                        pipelineMaxSize = 20
+                        keepAliveTime = 5000
+                        connectTimeout = 5000
+                        connectAttempts = 5
+                    }
 
             }
             install(HttpTimeout) {
