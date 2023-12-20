@@ -217,8 +217,8 @@ constructor() : HttpClientProvider {
 //                }
 //            }
             install(HttpTimeout) {
-                connectTimeoutMillis = 5000
-                socketTimeoutMillis = 5000
+                connectTimeoutMillis = 1000
+                socketTimeoutMillis = 1000
 
             }
             install(WebSockets) {
