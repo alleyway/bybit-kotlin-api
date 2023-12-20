@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.system.exitProcess
 
-
 private const val TOPIC_MESSAGE_KEY = "topic"
 private const val OPERATION_MESSAGE_KEY = "op"
 
@@ -62,19 +61,6 @@ constructor(
     val options: WSClientConfigurableOptions,
     val httpClientProvider: HttpClientProvider = DefaultCIOWebSocketClientProvider(),
 ) {
-
-
-//    private val retryConfig: RetryConfig = RetryConfig.custom()
-//        .maxAttempts(2)
-//        .waitDuration(Duration.ofMillis(1000))
-//        .retryOnResult { response -> response.getStatus() === 500 }
-//        //.retryOnException { e -> e is WebServiceException }
-//        .retryExceptions(IOException::class.java, TimeoutException::class.java)
-////        .ignoreExceptions(BusinessException::class.java, OtherBusinessException::class.java)
-//        .failAfterMaxAttempts(true)
-//        .build()
-
-
 
     internal val client = httpClientProvider.buildClient()
 
@@ -157,10 +143,11 @@ constructor(
      * The [handler] coroutine might not get called, if opening the WS fails.
      * Use [jobCallback] to receive the newly created job handling the WS connection.
      */
-    private suspend fun connectWebSocket(
-        handler: suspend (ClientWebSocketSession) -> Unit
+    internal suspend fun websocket(
+        handler: suspend (ClientWebSocketSession) -> Unit,
+        jobCallback: ((Job) -> Unit)? = null
     ): Boolean {
-        logger.debug("Starting a new WebSocket connection ...")
+        logger.debug("Starting a new WebSocket connection (${options.name}) ...")
 
         coroutineScope {
             try {
@@ -183,6 +170,10 @@ constructor(
                     handler(session)
                 }
                 websocketJobs.add(job)
+                logger.debug("A new WebSocket has been created, running in job {}", job)
+                if (jobCallback != null) {
+                    jobCallback(job)
+                }
                 true
             } catch (e: SerializationException) {
                 logger.debug("Failed to create a WebSocket: {}", e.localizedMessage)
@@ -199,10 +190,11 @@ constructor(
     /**
      * Handle a newly established WebSocket connection
      */
-    private suspend fun handleNewConnection(session: ClientWebSocketSession) {
+    private suspend fun handleWebSocket(session: ClientWebSocketSession) {
         isAuthenticated.set(false)
         sendChannel?.close()
         sendChannel = session.outgoing
+
         websocketJobs.add(Concurrency.run {
             val currentChannel = session.outgoing
             while (sendChannel != null && currentChannel == sendChannel) {
@@ -211,26 +203,24 @@ constructor(
                     val pingTime = awaitPing(timeout = options.websocketPingTimeout)
 
                     if (pingTime == null) {
-                        logger.debug { "null pingTime, closing sendChannel (${options.name})" }
-                        throw Exception("null pingtime")
+                        logger.debug { "null pingTime (${options.name})" }
+                        sendChannel?.close()
                     } else {
-                        logger.debug { "--- PING TIME: $pingTime ms (${options.name})" }
+                        logger.debug { "--- PING TIME: $pingTime (${options.name})" }
                     }
                 } catch (e: Exception) {
-                    logger.debug("Failed to send WebSocket ping: {}", e.localizedMessage)
-                    sendChannel?.close()
+                    logger.debug("Failed to send WebSocket ping(${options.name}): {}", e.localizedMessage)
                     Concurrency.run {
                         if (reconnectWebSocket) {
-                            delay(1000)
-                            connectWebSocket(::handleNewConnection)
+                            websocket(::handleWebSocket)
                         }
                     }
-                    return@run
                 }
                 delay(options.pingInterval)
             }
-            logger.debug("It looks like the WebSocket channel has been replaced")
+            logger.debug("It looks like the WebSocket channel has been replaced (${options.name})")
         })
+
 
         subscribe()
 
@@ -303,40 +293,35 @@ constructor(
                 }
             }
         } catch (e: ClosedReceiveChannelException) {
-            logger.debug("The WebSocket channel was closed(${options.name}): $e")
+            logger.debug("The WebSocket channel was closed: $e")
             sendChannel?.close()
             session.close()
             session.flush()
-
-            if (reconnectWebSocket) {
-                delay(1000)
-                connectWebSocket(::handleNewConnection)
+            Concurrency.run {
+                if (reconnectWebSocket) {
+                    websocket(::handleWebSocket)
+                }
             }
-
         } catch (e: CancellationException) {
-            logger.debug("WebSocket coroutine was cancelled, closing connection(${options.name}): $e")
+            logger.debug("WebSocket coroutine was cancelled, closing connection: $e")
+            sendChannel?.close()
             session.close()
             session.flush()
-            if (reconnectWebSocket) {
-                delay(1000)
-                connectWebSocket(::handleNewConnection)
-            }
         } catch (e: Throwable) {
             logger.error(
-                "Error while handling a WebSocket connection(${options.name}): {}\n{}",
+                "Error while handling a WebSocket connection: {}\n{}",
                 e.localizedMessage,
                 e.stackTraceToString()
             )
             sendChannel?.close()
             session.close()
             session.flush()
-
-            if (reconnectWebSocket) {
-                delay(1000)
-                connectWebSocket(::handleNewConnection)
+            Concurrency.run {
+                if (reconnectWebSocket) {
+                    websocket(::handleWebSocket)
+                }
             }
-
-            throw e
+//            throw e
         }
     }
 
@@ -385,10 +370,10 @@ constructor(
                 }
             }.toDouble() / 10e6
         } catch (_: ClosedReceiveChannelException) {
-            logger.trace { "closedReceiveChannel Exception when trying to await Ping: $key" }
+            logger.trace {"closedReceiveChannel Exception when trying to await Ping: $key"}
             return null
         } catch (e: Throwable) {
-            logger.trace { "caught throwable: $e" }
+            logger.trace {"caught throwable: $e"}
             return null
         } finally {
             synchronized(this) {
@@ -401,7 +386,7 @@ constructor(
      * Handler for incoming [FrameType.PONG] frames to make [awaitPing] work properly
      */
     private suspend fun onPong(content: String) {
-        logger.trace { "onPong($content)" }
+        logger.trace {"onPong($content)"}
         val receiver = synchronized(this) {
             pongReceivers[content]
         }
@@ -415,34 +400,31 @@ constructor(
      * Note that this callback might not get called if no new WS connection was created.
      * It returns the measured round trip time in milliseconds if everything was fine.
      */
-    private suspend fun ensureConnectedWebSocket(
+    suspend fun ensureConnectedWebSocket(
         timeout: Long = options.websocketPingTimeout,
         jobCallback: ((Job) -> Unit)? = null
     ): Double? {
         val pingMeasurement = try {
-            awaitPing(timeout = timeout)
+            awaitPing( timeout = timeout)
         } catch (e: Exception) {
             logger.debug("Error {} while ensuring connected WebSocket: {}", e, e.localizedMessage)
             null
         }
         if (pingMeasurement == null) {
-                connectWebSocket(::handleNewConnection)
+            websocket(::handleWebSocket, jobCallback)
         }
         return pingMeasurement
     }
 
     suspend fun connect(subscriptions: List<ByBitWebSocketSubscription>) {
-        subscriptions.forEach {
+        subscriptions.forEach{
             if (!_subscriptions.contains(it)) {
                 _subscriptions.add(it)
             }
         }
-
         logger.debug { "initial connect(${options.endpoint})..." }
-
         enableReconnecting()
-
-        connectWebSocket(::handleNewConnection)
+        websocket(::handleWebSocket)
         delay(10_000)
         ensureConnectedWebSocket()
     }
@@ -474,7 +456,7 @@ constructor(
      * send channel available and an exception otherwise.
      */
     private suspend fun sendPing(size: Int = 6): Boolean {
-        logger.debug { "sendPing(${size}) (${options.name})" }
+        logger.trace {"sendPing(${size})"}
         val body = ByteArray(size)
         Random().nextBytes(body)
         return sendPing(body.toString())
@@ -537,7 +519,7 @@ constructor(
 
         val subsToAddNow = subscriptions ?: _subscriptions
 
-        subscriptions?.forEach {
+        subscriptions?.forEach{
             if (!_subscriptions.contains(it)) {
                 _subscriptions.add(it)
             }
@@ -549,7 +531,7 @@ constructor(
             subsToAddNow.map { it.topic }.filterIsInstance<ByBitWebsocketTopic.PrivateTopic>()
                 .isNotEmpty() && !isAuthenticated.get()
         ) {
-            require(options.endpoint == ByBitEndpoint.Private) { "Endpoint must be 'Private' to subscribe to private topics!" }
+            require(options.endpoint.equals(ByBitEndpoint.Private)) { "Endpoint must be 'Private' to subscribe to private topics!" }
             val apiKey = options.key
             val expires = Instant.now().toEpochMilli() + 10000
 
@@ -632,13 +614,11 @@ constructor(
                     onPong(msg.reqId!!)
                     msg
                 }
-
                 "pong" -> { // this gets used in the "private" endpoint...API oddness
                     val msg = serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
                     onPong(msg.reqId!!)
                     msg
                 }
-
                 "auth" -> {
                     val msg = serializer.decodeFromJsonElement(StatusMessage.serializer(), frame)
                     if (msg.success!!) {
