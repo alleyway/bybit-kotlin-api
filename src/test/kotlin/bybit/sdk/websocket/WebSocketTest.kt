@@ -80,9 +80,8 @@ internal class WebSocketTest {
 //        httpClientProvider = okHttpClientProvider
         )
 
-        val scopeOne = CoroutineScope(Dispatchers.Default + Job())
-
         runBlocking {
+            val scopeOne = CoroutineScope(Dispatchers.Default + Job())
             scopeOne.launch {
 
                 wsClientPrivate.connect(privateSubs)
@@ -97,6 +96,7 @@ internal class WebSocketTest {
                                 }
                             }
                         }
+
                         else -> {
                             println(message.toString())
                         }
