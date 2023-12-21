@@ -144,8 +144,12 @@ constructor() : HttpClientProvider {
                         connectTimeout = 5000
                         connectAttempts = 5
                     }
-
             }
+            // could not get compression to work, fails silently
+//            install(ContentEncoding) {
+//                deflate(1.0F)
+//                gzip(0.9F)
+//            }
             install(HttpTimeout) {
                 connectTimeoutMillis = 5000
                 socketTimeoutMillis = 5000
@@ -215,6 +219,11 @@ constructor() : HttpClientProvider {
 //                    connectTimeout = 5000
 //                    connectAttempts = 5
 //                }
+//            }
+            // could not get compression to work, fails silently
+//            install(ContentEncoding) {
+//                deflate(1.0F)
+//                gzip(0.9F)
 //            }
             install(HttpTimeout) {
                 connectTimeoutMillis = 1000
