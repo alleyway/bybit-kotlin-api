@@ -41,5 +41,12 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
         callback: ByBitRestApiCallback<APIResponseV5>
     ) = coroutineToRestCallback(callback, { switchIsolated(params) })
 
+    fun closedPnLs(
+        params: ClosedPnLParams,
+        callback: ByBitRestApiCallback<ClosedPnLResponse>
+    ) = coroutineToRestCallback(callback, { closedPnLs(params) })
+
+    fun closedPnLsBlocking(params: ClosedPnLParams):
+            ClosedPnLResponse = runBlocking { closedPnLs(params) }
 
 }
