@@ -5,6 +5,7 @@ import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
 import bybit.sdk.rest.account.ByBitAccountClient
+import bybit.sdk.rest.asset.ByBitAssetClient
 import bybit.sdk.rest.market.ByBitMarketClient
 import bybit.sdk.rest.order.ByBitOrderClient
 import bybit.sdk.rest.position.ByBitPositionClient
@@ -37,6 +38,8 @@ constructor(
     val testnet: Boolean = false,
     val httpClientProvider: HttpClientProvider = DefaultCIOHttpClientProvider()
 ) {
+
+    val assetClient by lazy { ByBitAssetClient(this) }
 
     val accountClient by lazy { ByBitAccountClient(this) }
 
