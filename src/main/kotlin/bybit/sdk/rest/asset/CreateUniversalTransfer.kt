@@ -21,8 +21,8 @@ suspend fun ByBitAssetClient.createUniversalTransfer(
         params.coin.let { parameters["coin"] = it.toString() }
         params.amount.let { parameters["amount"] = it.toString() }
 
-        params.fromMemberId.let { parameters["fromMemberId"] = it.toString() }
-        params.toMemberId.let { parameters["toMemberId"] = it.toString() }
+        params.fromMemberId.let { parameters["fromMemberId"] = it }
+        params.toMemberId.let { parameters["toMemberId"] = it}
 
         params.fromAccountType.let { parameters["fromAccountType"] = it.toString() }
         params.toAccountType.let { parameters["toAccountType"] = it.toString() }
@@ -34,8 +34,8 @@ data class CreateUniversalTransferParams(
     val transferId: String, // "be7a2462-1138-4e27-80b1-62653f24925e",
     val coin: String, // "ETH"
     val amount: String, // "0.4"
-    val fromMemberId: Int,
-    val toMemberId: Int,
+    val fromMemberId: String,
+    val toMemberId: String,
     val fromAccountType: AccountType,
     val toAccountType: AccountType
 )
