@@ -23,8 +23,8 @@ internal class AssetClientTest {
                 transferId = UUID.randomUUID().toString(),
                 coin = "BTC",
                 amount = "0.001",
-                fromMemberId = 100488137,
-                toMemberId = 408568,
+                fromMemberId = "100488137",
+                toMemberId = "408568",
                 fromAccountType = AccountType.CONTRACT,
                 toAccountType = AccountType.CONTRACT
             )
