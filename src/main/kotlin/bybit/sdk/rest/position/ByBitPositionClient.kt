@@ -4,6 +4,8 @@ import bybit.sdk.ext.coroutineToRestCallback
 import bybit.sdk.rest.APIResponseV5
 import bybit.sdk.rest.ByBitRestApiCallback
 import bybit.sdk.rest.ByBitRestClient
+import bybit.sdk.rest.RequestIterator
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 
 class ByBitPositionClient
@@ -48,5 +50,17 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
 
     fun closedPnLsBlocking(params: ClosedPnLParams):
             ClosedPnLResponse = runBlocking { closedPnLs(params) }
+
+
+    fun closedPnLsPaginated(
+        params: ClosedPnLParams,
+    ): RequestIterator<ClosedPnLResponseItem> =
+        RequestIterator(
+            { closedPnLsBlocking(params) },
+            byBitRestClient.requestIteratorCall<ClosedPnLResponse>(
+                HttpMethod.Get,
+                false
+            )
+        )
 
 }
