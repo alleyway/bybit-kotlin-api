@@ -222,7 +222,12 @@ constructor(
         })
 
 
-        subscribe()
+        //this ensures we get our "snapshot" when subscribing to the stream (ie. full orderbook)
+        val scope = CoroutineScope(Dispatchers.Default + Job())
+        scope.launch {
+            delay(10000)
+            subscribe(immediately = true)
+        }
 
         try {
             while (true) {
@@ -515,7 +520,7 @@ constructor(
      * current cluster.
      *
      */
-    suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>? = null) {
+    suspend fun subscribe(subscriptions: List<ByBitWebSocketSubscription>? = null, immediately: Boolean = false) {
 
         val subsToAddNow = subscriptions ?: _subscriptions
 
@@ -524,6 +529,8 @@ constructor(
                 _subscriptions.add(it)
             }
         }
+
+        if (!immediately) return
 
         if (subsToAddNow.isEmpty()) return
 
