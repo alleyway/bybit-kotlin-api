@@ -1,6 +1,6 @@
 package bybit.sdk
 
 object Version {
-    const val name = "v0.5.1-SNAPSHOT"
-    const val userAgent = "ByBit JVM Client/$name"
+    const val name = "v0.6.0-SNAPSHOT"
+    const val userAgent = "bbkapi"
 }
