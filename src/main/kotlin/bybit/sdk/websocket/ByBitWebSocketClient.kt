@@ -53,13 +53,13 @@ data class WSClientConfigurableOptions(
  * @param apiKey the API key to use with all API requests
  * @param secret the API secret to use with all API requests
  * @param endpoint the [ByBitEndpoint] to connect to
- * @param httpClientProvider (Optional) A provider for the ktor [HttpClient] to use; defaults to [DefaultJvmHttpClientProvider]
+ * @param httpClientProvider (Optional) A provider for the ktor [HttpClient] to use;
  */
 class ByBitWebSocketClient
 @JvmOverloads
 constructor(
     val options: WSClientConfigurableOptions,
-    val httpClientProvider: HttpClientProvider = DefaultCIOWebSocketClientProvider(),
+    val httpClientProvider: HttpClientProvider = DefaultWebSocketClientProvider(),
 ) {
 
     internal val client = httpClientProvider.buildClient()

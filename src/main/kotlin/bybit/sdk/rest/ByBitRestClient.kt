@@ -1,7 +1,6 @@
 package bybit.sdk.rest
 
 import bybit.sdk.DefaultCIOHttpClientProvider
-import bybit.sdk.DefaultJvmHttpClientProvider
 import bybit.sdk.HttpClientProvider
 import bybit.sdk.Version
 import bybit.sdk.rest.account.ByBitAccountClient
@@ -28,7 +27,7 @@ import java.time.Instant
  * @param apiKey the API key to use with all API requests
  * @param secret the secret to use with all API requests
  * @param testnet whether to use testnet or not
- * @param httpClientProvider (Optional) A provider for the ktor [HttpClient] to use; defaults to [DefaultJvmHttpClientProvider]
+ * @param httpClientProvider (Optional) A provider for the ktor [HttpClient] to use
  */
 class ByBitRestClient
 @JvmOverloads

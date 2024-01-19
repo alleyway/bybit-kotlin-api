@@ -18,6 +18,12 @@ import okhttp3.Interceptor
 @Serializable
 data class Error(val retCode: Int, val retMsg: String)
 
+class RateLimitReachedException(response: HttpResponse): IllegalStateException() {
+    val endpointLimit: Int? = response.headers["X-Bapi-Limit"]?.toInt()
+    val endpointLimitStatus: Int? = response.headers["X-Bapi-Limit-Status"]?.toInt()
+    val endpointLimitResetTimestamp: Long? = response.headers["X-Bapi-Limit-Reset-Timestamp"]?.toLong()
+}
+
 class CustomResponseException(
     response: HttpResponse, cachedResponseText: String,
     val retCode: Int? = null,
@@ -92,7 +98,7 @@ constructor(
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code")
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers["ret_code"]
                             .equals("0")
                     ) {
                         if (response.status.value != 200) {
@@ -124,8 +130,7 @@ constructor(
 }
 
 
-open class DefaultCIOHttpClientProvider
-constructor() : HttpClientProvider {
+open class DefaultCIOHttpClientProvider : HttpClientProvider {
 
     private val logger = Logging.getLogger(DefaultCIOHttpClientProvider::class)
 
@@ -164,7 +169,15 @@ constructor() : HttpClientProvider {
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code")
+                    val status = response.headers["X-Bapi-Limit-Status"]
+
+                    status?.let {
+                        if (it.toInt() <= 0) {
+                            throw RateLimitReachedException(response)
+                        }
+                    }
+
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers["ret_code"]
                             .equals("0")
                     ) {
                         if (response.status.value != 200) {
@@ -198,10 +211,9 @@ constructor() : HttpClientProvider {
 }
 
 
-open class DefaultCIOWebSocketClientProvider
-constructor() : HttpClientProvider {
+open class DefaultWebSocketClientProvider : HttpClientProvider {
 
-    private val logger = Logging.getLogger(DefaultCIOWebSocketClientProvider::class)
+    private val logger = Logging.getLogger(DefaultWebSocketClientProvider::class)
 
     override fun buildClient() =
         HttpClient(OkHttp) {
@@ -243,7 +255,7 @@ constructor() : HttpClientProvider {
             HttpResponseValidator {
                 validateResponse { response ->
 
-                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers.get("ret_code")
+                    if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers["ret_code"]
                             .equals("0")
                     ) {
                         if (response.status.value != 200) {

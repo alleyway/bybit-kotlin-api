@@ -46,7 +46,7 @@ internal class OrderClientTest {
 			PlaceOrderParams(Category.inverse,
 				"BTCUSD", Side.Buy, OrderType.Limit,
 				"1.0",
-				price = 4_000.toString()
+				price = 5_000.toString()
 				)
 		)
 
@@ -69,6 +69,14 @@ internal class OrderClientTest {
 
 	@Test
 	fun ordersOpenTest() {
+
+		val newOrderResp = restClient.orderClient.placeOrderBlocking(
+			PlaceOrderParams(Category.inverse,
+				"BTCUSD", Side.Buy, OrderType.Limit,
+				"1.0",
+				price = 5_000.toString()
+			)
+		)
 		val resp = restClient.orderClient.ordersOpenPaginated(
 			OrdersOpenParams(Category.inverse)
 		)
