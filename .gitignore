@@ -7,6 +7,6 @@
 /captures
 .externalNativeBuild
 .cxx
-bybit.properties
 gradle.properties
 target
+bybit.properties
