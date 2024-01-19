@@ -8,7 +8,7 @@
 
     <groupId>io.github.alleyway</groupId>
     <artifactId>bybit-kotlin-api</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>bybit kotlin api</name>
     <description>Library for interfacing with ByBit written in Kotlin</description>
@@ -313,7 +313,6 @@
             <groupId>io.ktor</groupId>
             <artifactId>ktor-client-encoding</artifactId>
             <version>${ktor.version}</version>
-            <scope>implementation</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

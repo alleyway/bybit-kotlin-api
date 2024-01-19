@@ -12,7 +12,7 @@ To use the SDK in a Gradle project:
 ```groovy
 
 dependencies {
-    implementation 'io.github.alleyway:bybit-kotlin-api:0.5.0' 
+    implementation 'io.github.alleyway:bybit-kotlin-api:0.6.0' 
 }
 
 ```
@@ -23,7 +23,7 @@ To use the SDK in a Maven project:
 <dependency>
     <groupId>io.github.alleyway</groupId>
     <artifactId>bybit-kotlin-api</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
 </dependency>
 
 ```
