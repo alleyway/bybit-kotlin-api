@@ -19,9 +19,11 @@ import okhttp3.Interceptor
 data class Error(val retCode: Int, val retMsg: String)
 
 class RateLimitReachedException(response: HttpResponse): IllegalStateException() {
-    val endpointLimit: Int? = response.headers["X-Bapi-Limit"]?.toInt()
-    val endpointLimitStatus: Int? = response.headers["X-Bapi-Limit-Status"]?.toInt()
-    val endpointLimitResetTimestamp: Long? = response.headers["X-Bapi-Limit-Reset-Timestamp"]?.toLong()
+    private val endpointLimit: Int? = response.headers["X-Bapi-Limit"]?.toInt()
+    private val endpointLimitStatus: Int? = response.headers["X-Bapi-Limit-Status"]?.toInt()
+    private val endpointLimitResetTimestamp: Long? = response.headers["X-Bapi-Limit-Reset-Timestamp"]?.toLong()
+    override val message: String
+        get() = "Reached rate limit $endpointLimitStatus of $endpointLimit, resetting at $endpointLimitResetTimestamp"
 }
 
 class CustomResponseException(
@@ -182,9 +184,7 @@ open class DefaultCIOHttpClientProvider : HttpClientProvider {
                     ) {
                         if (response.status.value != 200) {
                             logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
-
                             logger.warn(response.bodyAsText())
-
                         } else {
                             val error: Error = response.body()
                             if (error.retCode != 0) {
@@ -196,9 +196,7 @@ open class DefaultCIOHttpClientProvider : HttpClientProvider {
                                 )
                             }
                         }
-
                     }
-
                 }
             }
         }

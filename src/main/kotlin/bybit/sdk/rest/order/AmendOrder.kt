@@ -2,10 +2,9 @@ package bybit.sdk.rest.order
 
 import bybit.sdk.rest.APIResponseV5
 import bybit.sdk.shared.Category
-import lombok.Builder
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
-
+import lombok.Builder
 
 
 // this doesn't work for spot!
@@ -23,6 +22,7 @@ suspend fun ByBitOrderClient.amendOrder(
         params.qty?.let { parameters["qty"] = it }
         params.price?.let { parameters["price"] = it }
         params.orderLinkId?.let { parameters["orderLinkId"] = it }
+        params.orderId?.let { parameters["orderId"] = it }
     }, HttpMethod.Post, false)
 
 
