@@ -1,6 +1,7 @@
 package bybit.sdk.rest
 
 
+import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.asset.CreateUniversalTransferParams
 import bybit.sdk.shared.AccountType
 import java.util.*
@@ -11,10 +12,11 @@ internal class AssetClientTest {
 
     private var restClient: ByBitRestClient =
         ByBitRestClient(
-            apiKey = System.getenv("BYBIT_API_KEY"),
-            secret = System.getenv("BYBIT_SECRET"),
+            apiKey = System.getenv("BYBIT_API_KEY") ?: ByBitProperties.APIKEY,
+            secret = System.getenv("BYBIT_SECRET") ?: ByBitProperties.SECRET,
             testnet = true,
-            httpClientProvider = okHttpClientProvider)
+//            httpClientProvider = okHttpClientProvider
+        )
 
     @Test
     fun createUniversalTransfer() {

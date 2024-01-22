@@ -1,12 +1,14 @@
 package bybit.sdk.websocket
 
+import bybit.sdk.properties.ByBitProperties
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
 
 internal class WebSocketTest {
 
-    val bybitKey: String = System.getenv("BYBIT_API_KEY")
-    val bybitSecret: String = System.getenv("BYBIT_SECRET")
+
+    val bybitKey = System.getenv("BYBIT_API_KEY") ?: ByBitProperties.APIKEY
+    val bybitSecret = System.getenv("BYBIT_SECRET") ?: ByBitProperties.SECRET
 
     val privateSubs = listOf(
         ByBitWebSocketSubscription(ByBitWebsocketTopic.PrivateTopic.Execution),

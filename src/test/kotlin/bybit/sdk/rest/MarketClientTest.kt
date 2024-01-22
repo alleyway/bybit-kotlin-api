@@ -1,6 +1,7 @@
 package bybit.sdk.rest
 
 
+import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.market.InstrumentsInfoParams
 import bybit.sdk.rest.market.PublicTradingHistoryParams
 import bybit.sdk.shared.Category
@@ -12,10 +13,11 @@ internal class MarketClientTest {
 
     private var restClient: ByBitRestClient =
         ByBitRestClient(
-            apiKey = System.getenv("BYBIT_API_KEY"),
-            secret = System.getenv("BYBIT_SECRET"),
+            apiKey = System.getenv("BYBIT_API_KEY") ?: ByBitProperties.APIKEY,
+            secret = System.getenv("BYBIT_SECRET") ?: ByBitProperties.SECRET,
             testnet = true,
-            httpClientProvider = okHttpClientProvider)
+//            httpClientProvider = okHttpClientProvider
+        )
 
     @Test
     fun getInstrumentsInfo() {
