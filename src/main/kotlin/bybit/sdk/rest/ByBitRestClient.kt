@@ -72,7 +72,7 @@ constructor(
             DEFAULT to 10,
             "/v5/order/create" to 10,
             "/v5/order/amend" to 10,
-            "/v5/order/cancel" to 10,
+            "/v5/order/cancel" to 8,
             "/v5/order/cancel-all" to 10,
             "/v5/order/realtime" to 10,
             "/v5/order/history" to 10,
@@ -89,7 +89,7 @@ constructor(
         return RateLimiterConfig.custom()
             .limitForPeriod(limit) // Allow 10 calls within a time window
             .limitRefreshPeriod(Duration.ofMillis(1_000)) // Time window of 1 second
-            .timeoutDuration(Duration.ofMillis(1_500)) // Timeout for acquiring a permit
+            .timeoutDuration(Duration.ofMillis(10_000)) // Timeout for acquiring a permit
             .drainPermissionsOnResult {
                 if (it.isRight && it.get() is Boolean && it.get() as Boolean) {
                     logger.warn("Reached rate limit!")
