@@ -48,7 +48,7 @@ internal class OrderClientTest {
     fun orderHistoryPaginatedTest() {
         val resp = restClient.orderClient.orderHistoryPaginated(
             OrderHistoryParams(Category.spot, "BTCUSD", limit = 10)
-        ).asSequence().toList()
+        ).asStream().toList()
 
         resp.forEach {
             println(it.orderId)
@@ -99,7 +99,7 @@ internal class OrderClientTest {
         val resp = restClient.orderClient.ordersOpenPaginated(
             OrdersOpenParams(Category.inverse)
         )
-        val items = resp.asSequence().toList()
+        val items = resp.asStream().toList()
         assertTrue(items.size > 0)
     }
 

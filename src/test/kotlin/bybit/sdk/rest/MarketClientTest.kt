@@ -53,7 +53,7 @@ internal class MarketClientTest {
 //			category = "linear"
         )
 
-        val resp = restClient.marketClient.listSupportedInstruments(params).asSequence().toList()
+        val resp = restClient.marketClient.listSupportedInstruments(params).asStream().toList()
 
         resp.forEach {
             println(it.symbol)
