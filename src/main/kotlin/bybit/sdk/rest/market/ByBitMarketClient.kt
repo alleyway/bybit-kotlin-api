@@ -38,4 +38,23 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
             { getInstrumentsInfoBlocking(params) },
             byBitRestClient.requestIteratorCall<InstrumentsInfoResponse<InstrumentsInfoResultItem>>()
         )
+
+    //////
+
+    fun getOpenInterestBlocking(params: OpenInterestParams):
+            OpenInterestResponse = runBlocking { getOpenInterest(params) }
+
+    fun getOpenInterest(
+        params: OpenInterestParams,
+        callback: ByBitRestApiCallback<OpenInterestResponse>
+    ) = coroutineToRestCallback(callback, { getOpenInterest(params) })
+
+
+    fun listOpenInterest(
+        params: OpenInterestParams,
+    ): RequestIterator<OpenInterestResultItem> =
+        RequestIterator(
+            { getOpenInterestBlocking(params) },
+            byBitRestClient.requestIteratorCall<OpenInterestResponse>()
+        )
 }
