@@ -57,4 +57,12 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
             { getOpenInterestBlocking(params) },
             byBitRestClient.requestIteratorCall<OpenInterestResponse>()
         )
+
+    fun getTickersBlocking(params: TickersParams):
+            TickersResponse = runBlocking { getTickers(params) }
+
+    fun getTickers(
+        params: TickersParams,
+        callback: ByBitRestApiCallback<TickersResponse>
+    ) = coroutineToRestCallback(callback, { getTickers(params) })
 }
