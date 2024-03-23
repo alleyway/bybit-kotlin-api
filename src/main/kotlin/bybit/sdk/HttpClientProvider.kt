@@ -32,8 +32,8 @@ class CustomResponseException(
     val retMsg: String? = null
 ) :
     ResponseException(response, cachedResponseText) {
-    override val message: String = "Custom server error: ${response.call.request.url}. " +
-            "HTTP Status: ${response.status} Text: \"$cachedResponseText\""
+    override val message: String = "Error for URL: ${response.call.request.url}\n" +
+            "\tHTTP Status: ${response.status} Text: \"$cachedResponseText\""
 }
 
 
