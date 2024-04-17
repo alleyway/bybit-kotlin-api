@@ -63,7 +63,7 @@ internal class OrderClientTest {
                 Category.inverse,
                 "BTCUSD", Side.Buy, OrderType.Limit,
                 "1.0",
-                price = 5_000.toString()
+                price = 50_000.toString()
             )
         )
 
