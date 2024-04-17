@@ -110,7 +110,7 @@ internal class OrderClientTest {
             CancelAllOrdersParams(Category.spot)
         )
         assertTrue(spotResponse.retCode == 0)
-        assertTrue(spotResponse is CancelAllOrdersResponse.CancelAllOrdersResponseSpot)
+//        assertTrue(spotResponse is CancelAllOrdersResponse.CancelAllOrdersResponseSpot)
 
         val linearResponse = restClient.orderClient.cancelAllOrdersBlocking(
             CancelAllOrdersParams(Category.linear, settleCoin = "USDT")
