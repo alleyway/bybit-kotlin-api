@@ -65,4 +65,12 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
         params: TickersParams,
         callback: ByBitRestApiCallback<TickersResponse>
     ) = coroutineToRestCallback(callback, { getTickers(params) })
+
+    fun getKLineBlocking(params: KLineParams):
+            KLineResponse = runBlocking { getKLine(params) }
+
+    fun getKline(
+        params: KLineParams,
+        callback: ByBitRestApiCallback<KLineResponse>
+    ) = coroutineToRestCallback(callback, { getKLine(params) })
 }
