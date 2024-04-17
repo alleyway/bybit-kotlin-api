@@ -3,6 +3,7 @@ package bybit.sdk.rest
 
 import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.market.InstrumentsInfoParams
+import bybit.sdk.rest.market.KLineParams
 import bybit.sdk.rest.market.OpenInterestParams
 import bybit.sdk.rest.market.PublicTradingHistoryParams
 import bybit.sdk.shared.Category
@@ -20,6 +21,23 @@ internal class MarketClientTest {
             testnet = true,
 //            httpClientProvider = okHttpClientProvider
         )
+
+    @Test
+    fun getKLine() {
+        val resp = restClient.marketClient.getKLineBlocking(
+            KLineParams(
+                category = Category.inverse,
+                symbol = "BTCUSD",
+                interval = "1",
+                start = 1709121660000,
+                end =   1709208060000
+            )
+        )
+
+
+        assertTrue { resp.result.list.size > 0 }
+
+    }
 
     @Test
     fun getOpenInterest() {
