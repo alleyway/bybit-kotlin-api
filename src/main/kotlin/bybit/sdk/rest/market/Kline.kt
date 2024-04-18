@@ -23,7 +23,7 @@ suspend fun ByBitMarketClient.getKline(
         params.category?.let { parameters["category"] = it.toString() }
         params.symbol.let { parameters["symbol"] = it }
         params.limit?.let { parameters["limit"] = it.toString() }
-        params.interval.let { parameters["interval"] = it.toString() }
+        params.interval.let { parameters["interval"] = it }
         params.start?.let { parameters["start"] = it.toString() }
         params.end?.let { parameters["end"] = it.toString() }
     })
