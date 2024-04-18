@@ -19,7 +19,6 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
         callback: ByBitRestApiCallback<InstrumentsInfoResponse<InstrumentsInfoResultItem>>
     ) = coroutineToRestCallback(callback, { getInstrumentsInfo(params) })
 
-
     fun getPublicTradingHistoryBlocking(params: PublicTradingHistoryParams):
             PublicTradingHistoryResponse = runBlocking { getPublicTradingHistory(params) }
 
@@ -65,4 +64,12 @@ internal constructor(internal val byBitRestClient: ByBitRestClient) {
         params: TickersParams,
         callback: ByBitRestApiCallback<TickersResponse>
     ) = coroutineToRestCallback(callback, { getTickers(params) })
+
+    fun getKlineBlocking(params: KlineParams):
+            KlineResponse = runBlocking { getKline(params) }
+
+    fun getKline(
+        params: KlineParams,
+        callback: ByBitRestApiCallback<KlineResponse>
+    ) = coroutineToRestCallback(callback, { getKline(params) })
 }
