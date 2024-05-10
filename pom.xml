@@ -21,7 +21,7 @@
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
         <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
         <kotlin.experimental.tryK2>false</kotlin.experimental.tryK2>
-        <kotlin.version>1.9.23</kotlin.version>
+        <kotlin.version>1.9.24</kotlin.version>
         <ktor.version>3.0.0-beta-1</ktor.version>
         <slf4j.version>2.0.7</slf4j.version>
     </properties>
@@ -350,5 +350,19 @@
 <!--        </dependency>-->
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>3.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio-jvm</artifactId>
+                <version>3.6.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
