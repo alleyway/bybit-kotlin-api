@@ -112,23 +112,10 @@ constructor(
         reconnectWebSocket = false
     }
 
-    /**
-     * Get a receiver channel for WebSocket [Event]s that is decoupled from the [EventBus] system
-     *
-     * All WebSocket events are sent to the [EventBus] as well as to all channels
-     * returned by this function, so it's possible to receive from any of these to
-     * get the event. It's better to cancel the [ReceiveChannel] after usage, but cleanup
-     * would also be carried out automatically asynchronously whenever events are sent.
-     * Note that only raw WebSocket messages are put here, i.e. no processed [GameInfo]
-     * or other large objects will be sent (the exception being [UpdateGameData], which
-     * may grow pretty big, as in up to 500 KiB as base64-encoded string data).
-     *
-     * Use the channel returned by this function if the GL render thread, which is used
-     * by the [EventBus] system, may not be available (e.g. in the Android turn checker).
-     */
     fun getWebSocketEventChannel(): ReceiveChannel<ByBitWebSocketMessage> {
-        // We're using CONFLATED channels here to avoid usage of possibly huge amounts of memory
-        val c = Channel<ByBitWebSocketMessage>(capacity = Channel.CONFLATED)
+        // CONFLATED means events might drop, UNLIMITED should use lots of memory
+        logger.warn("we are creating a Channel for websocket which capacity = Channel.UNLIMITED")
+        val c = Channel<ByBitWebSocketMessage>(capacity = Channel.UNLIMITED, onUndeliveredElement = { value -> logger.warn("Dropped value: $value") }  )
         eventChannelList.add(c as SendChannel<ByBitWebSocketMessage>)
         return c
     }
@@ -238,12 +225,13 @@ constructor(
                     }
 
                     FrameType.PONG -> {
-                        logger.debug(
+                        logger.warn(
                             "Received real PONG frame, but this is not supported: {}", incomingFrame.data
                         )
                     }
 
                     FrameType.CLOSE -> {
+                        logger.warn { "Received FrameType.CLOSE for session.incoming.receive()"}
                         throw ClosedReceiveChannelException("Received CLOSE frame via WebSocket")
                     }
 
