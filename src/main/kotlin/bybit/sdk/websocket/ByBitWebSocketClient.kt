@@ -274,9 +274,12 @@ constructor(
                                         try {
                                             when (msg) {
                                                 is TopicResponse.PublicTrade -> {
+                                                    // We're OK to drop trades in times of high volatility
+                                                    // trySend -> isFailure when capacity is full
+                                                    // only the ByBitLiveFeed gets PublicTrade messages
                                                     val channelResult = c.trySend(msg)
                                                     if (channelResult.isFailure) {
-                                                        logger.error("trySend failed: $channelResult")
+                                                        logger.warn("trySend failed: $channelResult")
                                                     }
                                                 }
                                                 else -> {
