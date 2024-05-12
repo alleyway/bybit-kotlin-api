@@ -2,6 +2,7 @@ package bybit.sdk.websocket
 
 import bybit.sdk.properties.ByBitProperties
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BufferOverflow
 import org.junit.jupiter.api.Test
 
 internal class WebSocketTest {
@@ -43,7 +44,7 @@ internal class WebSocketTest {
             scopeOne.launch {
                 wsClientOne.connect(listOf(ByBitWebSocketSubscription(ByBitWebsocketTopic.Trades, "BTCUSD")))
 
-                val channel = wsClientOne.getWebSocketEventChannel()
+                val channel = wsClientOne.getWebSocketEventChannel(10, BufferOverflow.SUSPEND)
 
                 while (true) {
                     val msg = channel.receive()
@@ -88,7 +89,7 @@ internal class WebSocketTest {
 
                 wsClientPrivate.connect(privateSubs)
 
-                val channel = wsClientPrivate.getWebSocketEventChannel()
+                val channel = wsClientPrivate.getWebSocketEventChannel(10, BufferOverflow.SUSPEND)
                 while (true) {
                     when (val message = channel.receive()) {
                         is ByBitWebSocketMessage.StatusMessage -> {

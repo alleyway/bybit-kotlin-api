@@ -112,10 +112,13 @@ constructor(
         reconnectWebSocket = false
     }
 
-    fun getWebSocketEventChannel(): ReceiveChannel<ByBitWebSocketMessage> {
+    fun getWebSocketEventChannel(capacity: Int, onBufferOverflow: BufferOverflow): ReceiveChannel<ByBitWebSocketMessage> {
         // CONFLATED means events might drop, UNLIMITED should use lots of memory
-        logger.warn("we are creating a Channel for websocket which capacity = Channel.UNLIMITED")
-        val c = Channel<ByBitWebSocketMessage>(capacity = Channel.UNLIMITED, onUndeliveredElement = { value -> logger.warn("Dropped value: $value") }  )
+        logger.warn("we are creating a Channel for websocket which capacity = $capacity")
+        val c = Channel<ByBitWebSocketMessage>(
+            capacity = capacity,
+            onBufferOverflow = onBufferOverflow,
+            onUndeliveredElement = { value -> logger.warn("Dropped value: $value") }  )
         eventChannelList.add(c as SendChannel<ByBitWebSocketMessage>)
         return c
     }
@@ -261,11 +264,27 @@ constructor(
                             for (msg in messageList) {
                                 logger.trace("Incoming WebSocket message {}: {}", msg::class.java.canonicalName, msg)
 
+                                if (eventChannelList.isEmpty()) {
+                                    logger.error("eventChannelList is empty")
+                                    continue
+                                }
+
                                 for (c in eventChannelList) {
                                     Concurrency.run {
                                         try {
-                                            c.send(msg)
-                                        } catch (_: ClosedSendChannelException) {
+                                            when (msg) {
+                                                is TopicResponse.PublicTrade -> {
+                                                    val channelResult = c.trySend(msg)
+                                                    if (channelResult.isFailure) {
+                                                        logger.error("trySend failed: $channelResult")
+                                                    }
+                                                }
+                                                else -> {
+                                                    c.send(msg)
+                                                }
+                                            }
+                                        } catch (e: ClosedSendChannelException) {
+                                            logger.error { "SendChannel closed: ${e.message}"}
                                             delay(10)
                                             eventChannelList.remove(c)
                                         } catch (t: Throwable) {
