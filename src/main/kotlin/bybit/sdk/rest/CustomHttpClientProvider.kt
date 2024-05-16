@@ -8,11 +8,11 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 
-public val okHttpClientProvider: HttpClientProvider
+val okHttpClientProvider: HttpClientProvider
     get() = DefaultOkHttpClientProvider(
         applicationInterceptors = listOf(object : Interceptor {
             override fun intercept(chain: Interceptor.Chain): Response {
-                val logger = Logging.getLogger("okHttpClientProvider")
+                val logger = Logging.getLogger("bybit.sdk.okHttpClientProvider")
                 logger.debug("Intercepting application level")
                 logger.debug("request: ${chain.request().url}")
                 var response = chain.proceed(chain.request())
@@ -30,7 +30,7 @@ public val okHttpClientProvider: HttpClientProvider
         }),
         networkInterceptors = listOf(object : Interceptor {
             override fun intercept(chain: Interceptor.Chain): Response {
-                Logging.getLogger("okHttpClientProvider").debug("Intercepting network level")
+                Logging.getLogger("bybit.sdk.okHttpClientProvider").debug("Intercepting network level")
                 return chain.proceed(chain.request())
             }
         })
