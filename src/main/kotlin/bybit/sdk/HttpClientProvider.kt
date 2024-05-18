@@ -100,12 +100,19 @@ constructor(
             HttpResponseValidator {
                 validateResponse { response ->
 
+                    val status = response.headers["X-Bapi-Limit-Status"]
+
+                    status?.let {
+                        if (it.toInt() <= 0) {
+                            throw RateLimitReachedException(response)
+                        }
+                    }
+
                     if (response.request.url.protocol == URLProtocol.HTTPS && !response.headers["ret_code"]
                             .equals("0")
                     ) {
                         if (response.status.value != 200) {
                             logger.warn("HTTP error: ${response.status.toString()} ${response.status.description}")
-
                             logger.warn(response.bodyAsText())
 
                         } else {
@@ -113,7 +120,9 @@ constructor(
                             if (error.retCode != 0) {
                                 throw CustomResponseException(
                                     response,
-                                    "Code: ${error.retCode}, message: ${error.retMsg}"
+                                    "Code: ${error.retCode}, message: ${error.retMsg}",
+                                    retCode = error.retCode,
+                                    retMsg = error.retMsg
                                 )
                             }
                         }

@@ -114,11 +114,27 @@ constructor(
 
     fun getWebSocketEventChannel(capacity: Int, onBufferOverflow: BufferOverflow): ReceiveChannel<ByBitWebSocketMessage> {
         // CONFLATED means events might drop, UNLIMITED should use lots of memory
-        logger.warn("we are creating a Channel for websocket which capacity = $capacity")
+        logger.warn("we are creating a Channel for websocket with capacity = $capacity")
         val c = Channel<ByBitWebSocketMessage>(
             capacity = capacity,
             onBufferOverflow = onBufferOverflow,
-            onUndeliveredElement = { value -> logger.warn("Dropped value: $value") }  )
+            onUndeliveredElement = { value ->
+
+                // TODO: if dropped value is PONG, then reset connection
+                when (value) {
+                    is StatusMessage -> {
+                        if (value.retMsg == "pong") {
+                            logger.error("T: Unable to receive pong response. Throwing exception to (hopefully) trigger reset!")
+                            throw RuntimeException("Undelivered pong response because channel full with capacity: $capacity, onBufferOverflow: $onBufferOverflow")
+                        }
+                    }
+                    else -> {
+                        logger.warn("Dropped value: $value")
+                    }
+                }
+
+
+            }  )
         eventChannelList.add(c as SendChannel<ByBitWebSocketMessage>)
         return c
     }
