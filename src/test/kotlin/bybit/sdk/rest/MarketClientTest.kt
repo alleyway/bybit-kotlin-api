@@ -3,7 +3,7 @@ package bybit.sdk.rest
 
 import bybit.sdk.properties.ByBitProperties
 import bybit.sdk.rest.market.InstrumentsInfoParams
-import bybit.sdk.rest.market.KLineParams
+import bybit.sdk.rest.market.KlineParams
 import bybit.sdk.rest.market.OpenInterestParams
 import bybit.sdk.rest.market.PublicTradingHistoryParams
 import bybit.sdk.shared.Category
@@ -23,23 +23,6 @@ internal class MarketClientTest {
         )
 
     @Test
-    fun getKLine() {
-        val resp = restClient.marketClient.getKLineBlocking(
-            KLineParams(
-                category = Category.inverse,
-                symbol = "BTCUSD",
-                interval = "1",
-                start = 1709121660000,
-                end =   1709208060000
-            )
-        )
-
-
-        assertTrue { resp.result.list.size > 0 }
-
-    }
-
-    @Test
     fun getOpenInterest() {
 
         val resp = restClient.marketClient.listOpenInterest(
@@ -48,7 +31,7 @@ internal class MarketClientTest {
                 symbol = "BTCUSD",
                 intervalTime = IntervalTime.FiveMinutes,
                 startTime = 1709121660000,
-                endTime =   1709208060000
+                endTime = 1709208060000
             )
         )
 
@@ -103,5 +86,20 @@ internal class MarketClientTest {
         assertTrue(resp.size > 8)
     }
 
+    @Test
+    fun getKline() {
 
+        val resp = restClient.marketClient.getKlineBlocking(
+            KlineParams(
+                category = Category.inverse,
+                symbol = "BTCUSD",
+                interval = "60",
+                //start = 1670601600000,
+                //end = 1670608800000
+            )
+        )
+        assertEquals(0, resp.retCode)
+        assertEquals("OK", resp.retMsg)
+        assertTrue(resp.result.list.isNotEmpty())
+    }
 }
